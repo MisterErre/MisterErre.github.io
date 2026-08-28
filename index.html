@@ -27,6 +27,7 @@
   --red-soft:#ff8095;
   --cyan:#3aeaff;
   --violet:#c46bf5;
+  --amber:#ffb648;
   --ink:#f6f3fc;
   --muted:#bcb4d6;
   --dim:#948cb3;
@@ -224,7 +225,9 @@ nav{
      .hot    red    — platforms and products actually operated
      .cool   cyan   — engineering, cloud and tooling
      (plain) grey   — standards, protocols and processes
-     .sector violet — industries delivered into                        */
+     .sector violet — industries delivered into
+     .soft   amber  — human skills; warm on purpose, so the one non-technical
+                      row on the page does not read as just another stack   */
 .tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:4px; align-items:center}
 .tag{
   font-family:'Share Tech Mono',monospace; font-size:.72rem; letter-spacing:.05em;
@@ -234,6 +237,7 @@ nav{
 .tag.hot{border-color:rgba(255,47,82,.65); color:var(--red-soft); background:rgba(255,47,82,.09)}
 .tag.cool{border-color:rgba(58,234,255,.5); color:var(--cyan); background:rgba(58,234,255,.07)}
 .tag.sector{border-color:rgba(196,107,245,.6); color:#dcaaff; background:rgba(196,107,245,.1)}
+.tag.soft{border-color:rgba(255,182,72,.6); color:#ffd08f; background:rgba(255,182,72,.1)}
 
 .taglabel{
   font-size:.64rem; letter-spacing:.22em; text-transform:uppercase;
@@ -374,7 +378,8 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 
     <div class="cta">
       <a class="btn" href="#log">Open the log</a>
-      <a class="btn ghost" href="cv-adrian-lorente.pdf">Download CV (PDF)</a>
+      <!-- Opens in a new tab: reading the CV should never replace the page. -->
+      <a class="btn ghost" href="cv-adrian-lorente.pdf" target="_blank" rel="noopener">Read the CV (PDF)</a>
     </div>
   </div>
 </header>
@@ -713,10 +718,18 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
         Before that, board member and founder of the Hardware SIG at the ACM UPM student
         chapter, and a volunteer at COY15 / COP25 in Madrid.
       </p>
-      <div class="tags">
-        <span class="tag">Non-formal education</span>
-        <span class="tag">Facilitation</span>
-        <span class="tag">Event organising</span>
+      <div class="tags" style="margin-top:16px">
+        <span class="taglabel">Soft skills</span>
+        <span class="tag soft">Training &amp; mentoring</span>
+        <span class="tag soft">Facilitation</span>
+        <span class="tag soft">Public speaking</span>
+        <span class="tag soft">Collaborative work</span>
+        <span class="tag soft">Stakeholder management</span>
+        <span class="tag soft">Cross-cultural teams</span>
+        <span class="tag soft">Leadership</span>
+        <span class="tag soft">Knowledge transfer</span>
+        <span class="tag soft">Non-formal education</span>
+        <span class="tag soft">Event organising</span>
       </div>
     </div>
   </div>
@@ -752,7 +765,8 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
       </div>
       <div class="contact-card">
         <span class="lbl">Curriculum</span>
-        <a href="cv-adrian-lorente.pdf">Download PDF</a>
+        <!-- `download` saves the file straight to disk without navigating away. -->
+        <a href="cv-adrian-lorente.pdf" download>Download PDF</a>
       </div>
     </div>
   </div>

@@ -41,6 +41,7 @@ is worse than one that is slightly out of date.
   | `.tag.cool` | cyan | Engineering, cloud and tooling |
   | `.tag` | grey | Standards, protocols and processes |
   | `.tag.sector` | violet | Industries delivered into |
+  | `.tag.soft` | amber | Human skills — warm on purpose, so the one non-technical row does not read as another stack |
 
   The legend under *Arsenal* documents the first three for the reader. In the
   timeline each tag row carries a `.taglabel` (`Stack` / `Sectors`) so a row of
