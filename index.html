@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adrian Lorente · IAM Engineer</title>
+<meta name="description" content="Adrian Lorente — Identity &amp; Access Management engineer. Identity governance, privileged access and the pipelines behind them.">
+<meta name="theme-color" content="#07060d">
+
+<meta property="og:title" content="Adrian Lorente · IAM Engineer">
+<meta property="og:description" content="Identity governance, privileged access, and the pipelines behind them.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>&#x1F51B;</text></svg>">
+
+<style>
+:root{
+  --void:#0b0916;
+  --deep:#13102340;
+  --panel:#1a1530;
+  --line:#3d2f66;
+  --red:#ff2f52;
+  --red-soft:#ff8095;
+  --cyan:#3aeaff;
+  --violet:#c46bf5;
+  --ink:#f6f3fc;
+  --muted:#bcb4d6;
+  --dim:#948cb3;
+  --maxw:1080px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--void); color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-weight:300; line-height:1.65; letter-spacing:.005em;
+  overflow-x:hidden;
+}
+img{max-width:100%}
+a{color:var(--cyan); text-decoration:none}
+a:hover{color:var(--red-soft)}
+
+/* ---------- atmosphere ---------- */
+.scanlines,.vignette{position:fixed; inset:0; pointer-events:none; z-index:60}
+.scanlines{
+  background:repeating-linear-gradient(to bottom,
+    rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px,
+    transparent 1px, transparent 3px);
+  opacity:.28; mix-blend-mode:multiply;
+}
+.vignette{
+  background:radial-gradient(ellipse at 50% 40%, transparent 52%, rgba(0,0,0,.5) 100%);
+}
+.flicker{animation:flicker 7s infinite steps(1)}
+@keyframes flicker{
+  0%,96%,100%{opacity:1}
+  97%{opacity:.72}
+  98%{opacity:1}
+  99%{opacity:.85}
+}
+
+/* ---------- type ---------- */
+.display{
+  font-family:'Bevan',Georgia,serif; font-weight:400;
+  letter-spacing:.02em; line-height:1.05; text-transform:uppercase;
+}
+.mono{font-family:'Share Tech Mono',ui-monospace,monospace; letter-spacing:.09em}
+
+.neon-red{
+  color:#fff;
+  text-shadow:
+    0 0 4px rgba(255,255,255,.55),
+    0 0 12px var(--red),
+    0 0 32px rgba(255,30,66,.75),
+    0 0 70px rgba(255,30,66,.45);
+}
+.neon-cyan{
+  color:#eafdff;
+  text-shadow:0 0 6px var(--cyan), 0 0 22px rgba(34,228,245,.6);
+}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:22px}
+section{position:relative; padding:80px 0; z-index:2}
+.sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:8px; flex-wrap:wrap}
+.sec-num{font-size:.72rem; color:var(--red); letter-spacing:.28em}
+.sec-title{font-size:clamp(1.5rem,4.2vw,2.35rem); margin:0}
+.sec-rule{
+  height:1px; margin:20px 0 40px;
+  background:linear-gradient(90deg,var(--red),var(--violet) 40%,transparent 85%);
+  box-shadow:0 0 14px rgba(255,30,66,.5);
+}
+.lede{color:var(--muted); max-width:62ch; margin:0 0 6px}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:blur(12px);
+  background:linear-gradient(180deg, rgba(7,6,13,.94), rgba(7,6,13,.7));
+  border-bottom:1px solid var(--line);
+}
+.nav-in{
+  max-width:var(--maxw); margin-inline:auto; padding:12px 22px;
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+}
+.brand{font-size:.95rem; letter-spacing:.16em; white-space:nowrap}
+.nav-links{display:flex; gap:22px; flex-wrap:wrap}
+.nav-links a{
+  font-family:'Share Tech Mono',monospace; font-size:.8rem;
+  letter-spacing:.16em; color:var(--muted); text-transform:uppercase;
+  padding-bottom:3px; border-bottom:1px solid transparent;
+}
+.nav-links a:hover{color:var(--ink); border-bottom-color:var(--red); text-shadow:0 0 10px rgba(255,30,66,.7)}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:92vh; display:flex; flex-direction:column; justify-content:center;
+  padding:70px 0 60px; overflow:hidden;
+}
+.horizon{
+  position:absolute; inset:auto 0 0 0; height:52vh; z-index:0; overflow:hidden;
+  mask-image:linear-gradient(to bottom, transparent, #000 38%);
+  -webkit-mask-image:linear-gradient(to bottom, transparent, #000 38%);
+}
+.horizon::before{
+  content:''; position:absolute; inset:-40% -60% -20% -60%;
+  background:
+    repeating-linear-gradient(90deg, rgba(196,107,245,.72) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(0deg, rgba(255,47,82,.62) 0 1px, transparent 1px 62px);
+  transform:perspective(320px) rotateX(72deg);
+  transform-origin:50% 100%;
+  animation:drift 9s linear infinite;
+}
+@keyframes drift{from{background-position:0 0,0 0} to{background-position:0 0,0 62px}}
+.sun{
+  position:absolute; left:50%; bottom:34vh; translate:-50% 0;
+  width:min(620px,90vw); aspect-ratio:1; border-radius:50%; z-index:0;
+  background:radial-gradient(circle at 50% 60%, rgba(255,47,82,.42), rgba(196,107,245,.22) 55%, transparent 70%);
+  filter:blur(6px);
+}
+
+.eyebrow{
+  font-size:.78rem; letter-spacing:.32em; color:var(--red);
+  text-transform:uppercase; margin-bottom:18px;
+}
+.hero h1{
+  font-size:clamp(2.7rem,10.5vw,6.6rem); margin:0 0 14px;
+}
+.tagline{
+  font-size:clamp(.82rem,2.3vw,1.05rem); letter-spacing:.2em;
+  color:var(--cyan); text-transform:uppercase; margin:0 0 26px;
+}
+.hero-note{max-width:56ch; color:var(--muted); margin:0 0 34px}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:36px}
+.stat{
+  border:1px solid var(--line); border-radius:3px; padding:14px 16px;
+  background:linear-gradient(180deg, rgba(255,30,66,.05), rgba(18,14,33,.55));
+}
+.stat b{display:block; font-family:'Bevan',serif; font-size:1.55rem; color:#fff;
+  text-shadow:0 0 16px rgba(255,30,66,.75); line-height:1.1}
+.stat span{font-size:.68rem; letter-spacing:.15em; color:var(--dim); text-transform:uppercase}
+
+.cta{display:flex; gap:14px; flex-wrap:wrap}
+.btn{
+  display:inline-block; padding:11px 22px; border-radius:2px;
+  font-family:'Share Tech Mono',monospace; font-size:.82rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  border:1px solid var(--red); color:#fff;
+  background:rgba(255,30,66,.08);
+  box-shadow:0 0 16px rgba(255,30,66,.28), inset 0 0 16px rgba(255,30,66,.09);
+  transition:.18s ease;
+}
+.btn:hover{background:rgba(255,30,66,.2); box-shadow:0 0 30px rgba(255,30,66,.55); color:#fff}
+.btn.ghost{border-color:var(--line); background:transparent; box-shadow:none; color:var(--muted)}
+.btn.ghost:hover{border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 20px rgba(34,228,245,.35)}
+
+/* ---------- dossier ---------- */
+.dossier{
+  border:1px solid var(--line); border-radius:4px; overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(255,30,66,.07), transparent 30%),
+    var(--panel);
+  box-shadow:0 0 0 1px rgba(255,30,66,.1), 0 24px 60px rgba(0,0,0,.6);
+}
+.dossier-top{
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:12px 18px; border-bottom:1px solid var(--line);
+  background:rgba(255,30,66,.07); flex-wrap:wrap;
+}
+.dossier-top .mono{font-size:.74rem; color:var(--red-soft); letter-spacing:.2em}
+.badge{
+  font-family:'Share Tech Mono',monospace; font-size:.68rem; letter-spacing:.18em;
+  padding:3px 10px; border:1px solid var(--cyan); color:var(--cyan);
+  border-radius:2px; text-transform:uppercase;
+}
+.dossier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0}
+.field{padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
+.field:last-child{border-right:none}
+.field dt{font-size:.66rem; letter-spacing:.2em; color:var(--dim); text-transform:uppercase; margin-bottom:6px}
+.field dd{margin:0; font-size:.94rem; color:var(--ink)}
+
+/* ---------- cards ---------- */
+.grid{display:grid; gap:18px}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{
+  border:1px solid var(--line); border-radius:4px; padding:22px;
+  background:linear-gradient(180deg, rgba(196,107,245,.12), rgba(26,21,48,.75));
+  transition:.2s ease;
+}
+.card:hover{border-color:rgba(255,30,66,.55); box-shadow:0 0 26px rgba(255,30,66,.18); transform:translateY(-2px)}
+.card h3{
+  font-family:'Bevan',serif; font-weight:400; text-transform:uppercase;
+  font-size:1.02rem; letter-spacing:.05em; margin:0 0 4px; color:#fff;
+}
+.card .kicker{font-size:.68rem; letter-spacing:.2em; color:var(--red); text-transform:uppercase; margin-bottom:14px}
+
+/* Tag colour is semantic, not decorative:
+     .hot    red    — platforms and products actually operated
+     .cool   cyan   — engineering, cloud and tooling
+     (plain) grey   — standards, protocols and processes
+     .sector violet — industries delivered into                        */
+.tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:4px; align-items:center}
+.tag{
+  font-family:'Share Tech Mono',monospace; font-size:.72rem; letter-spacing:.05em;
+  padding:4px 10px; border:1px solid var(--line); border-radius:2px;
+  color:var(--muted); background:rgba(255,255,255,.04);
+}
+.tag.hot{border-color:rgba(255,47,82,.65); color:var(--red-soft); background:rgba(255,47,82,.09)}
+.tag.cool{border-color:rgba(58,234,255,.5); color:var(--cyan); background:rgba(58,234,255,.07)}
+.tag.sector{border-color:rgba(196,107,245,.6); color:#dcaaff; background:rgba(196,107,245,.1)}
+
+.taglabel{
+  font-size:.64rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--dim); margin-right:4px;
+}
+
+.legend{
+  display:flex; flex-wrap:wrap; gap:18px; margin:-18px 0 30px;
+  font-family:'Share Tech Mono',monospace; font-size:.72rem; color:var(--dim);
+}
+.legend span{display:inline-flex; align-items:center; gap:7px}
+.legend i{width:9px; height:9px; border-radius:2px; display:inline-block}
+.legend .k-hot{background:var(--red); box-shadow:0 0 8px var(--red)}
+.legend .k-cool{background:var(--cyan); box-shadow:0 0 8px var(--cyan)}
+.legend .k-plain{background:#6d6490}
+
+/* ---------- timeline ---------- */
+.log{position:relative; padding-left:30px}
+.log::before{
+  content:''; position:absolute; left:7px; top:6px; bottom:6px; width:1px;
+  background:linear-gradient(180deg,var(--red),var(--violet),transparent);
+  box-shadow:0 0 12px rgba(255,30,66,.6);
+}
+.entry{position:relative; margin-bottom:30px}
+.entry::before{
+  content:''; position:absolute; left:-27px; top:9px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--violet); box-shadow:0 0 12px var(--violet);
+}
+.entry.active::before{background:var(--red); box-shadow:0 0 16px var(--red); animation:pulse 2.2s infinite ease-in-out}
+@keyframes pulse{0%,100%{transform:scale(1); opacity:1} 50%{transform:scale(1.45); opacity:.65}}
+.entry-head{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:baseline}
+/* No text-transform here on purpose: brands like "iC Consult" carry their own
+   casing, and uppercasing them silently rebrands the employer. */
+.entry h3{font-family:'Bevan',serif; font-weight:400; font-size:1.18rem; margin:0; color:#fff; letter-spacing:.02em}
+.entry .when{font-family:'Share Tech Mono',monospace; font-size:.78rem; color:var(--cyan); letter-spacing:.08em; white-space:nowrap}
+.entry .role{color:var(--red-soft); font-size:.9rem; margin:3px 0 10px; letter-spacing:.02em}
+.entry p{margin:0 0 12px; color:var(--muted)}
+.entry ul{margin:0 0 12px; padding-left:18px; color:var(--muted)}
+.entry li{margin-bottom:6px}
+.entry li::marker{color:var(--red)}
+.scope{
+  font-family:'Share Tech Mono',monospace; font-size:.76rem; color:var(--dim);
+  border-left:2px solid var(--red); padding-left:12px; margin:0 0 12px;
+}
+
+/* ---------- lists ---------- */
+.rows{display:grid; gap:14px}
+.row{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding-bottom:14px; border-bottom:1px solid var(--line);
+}
+.row:last-child{border-bottom:none}
+.row > div:first-child{flex:1 1 240px; min-width:0}
+.row strong{color:#fff; font-weight:500}
+.row .sub{color:var(--dim); font-size:.86rem}
+.row .when{flex:0 0 auto; font-family:'Share Tech Mono',monospace; font-size:.78rem; color:var(--cyan); white-space:nowrap}
+
+/* ---------- contact ---------- */
+.contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:26px}
+.contact-card{
+  border:1px solid var(--line); border-radius:4px; padding:20px; text-align:center;
+  background:rgba(18,14,33,.5); transition:.2s ease;
+}
+.contact-card:hover{border-color:var(--cyan); box-shadow:0 0 24px rgba(34,228,245,.22)}
+.contact-card .lbl{font-size:.66rem; letter-spacing:.22em; color:var(--dim); text-transform:uppercase; display:block; margin-bottom:8px}
+.contact-card a{font-family:'Share Tech Mono',monospace; font-size:.9rem; word-break:break-word}
+
+footer{
+  border-top:1px solid var(--line); padding:34px 0 44px; text-align:center;
+  color:var(--dim); font-size:.8rem;
+}
+footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin-bottom:10px; letter-spacing:.08em}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+.reveal.in{opacity:1; transform:none}
+
+@media (max-width:640px){
+  section{padding:60px 0}
+  .field{border-right:none}
+  /* Drop the wordmark and keep the links on a single scrollable row, so the
+     sticky bar stays one line tall instead of eating a third of the screen. */
+  .brand{display:none}
+  .nav-in{padding:10px 16px}
+  .nav-links{
+    width:100%; gap:16px; flex-wrap:nowrap;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{font-size:.72rem; letter-spacing:.08em; white-space:nowrap}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+  .reveal{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<nav>
+  <div class="nav-in">
+    <span class="brand display neon-red">A. Lorente</span>
+    <div class="nav-links">
+      <a href="#background">Background</a>
+      <a href="#arsenal">Arsenal</a>
+      <a href="#log">Log</a>
+      <a href="#credentials">Credentials</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="sun" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow mono">Madrid · Spain — signal active</p>
+    <h1 class="display neon-red flicker">Adrian<br>Lorente</h1>
+    <p class="tagline mono">IAM Engineer — Identity Governance &amp; Privileged Access</p>
+    <p class="hero-note">
+      I build and run the systems that decide who gets in, what they can touch,
+      and who is watching. Eight years of it, mostly on SailPoint, increasingly
+      on the privileged side of the house.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><b>8+</b><span>Years in IAM</span></div>
+      <div class="stat"><b>15+</b><span>Technologies in the toolkit</span></div>
+      <div class="stat"><b>5</b><span>Sectors delivered in</span></div>
+      <div class="stat"><b>3+</b><span>Years as soft-skills trainer</span></div>
+    </div>
+
+    <div class="cta">
+      <a class="btn" href="#log">Open the log</a>
+      <a class="btn ghost" href="cv-adrian-lorente.pdf">Download CV (PDF)</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= DOSSIER ================= -->
+<section id="dossier">
+  <div class="wrap reveal">
+    <div class="dossier">
+      <div class="dossier-top">
+        <span class="mono">FILE 001 — SUBJECT: LORENTE, ADRIAN</span>
+        <span class="badge">Status: Active</span>
+      </div>
+      <div class="dossier-grid">
+        <dl class="field"><dt>Designation</dt><dd>Senior Consultant — IAM, iC Consult</dd></dl>
+        <dl class="field"><dt>Base of operations</dt><dd>Madrid, Spain</dd></dl>
+        <dl class="field"><dt>Primary discipline</dt><dd>Identity Governance &amp; Administration</dd></dl>
+        <dl class="field"><dt>Secondary discipline</dt><dd>Privileged Access Management</dd></dl>
+        <dl class="field"><dt>Languages</dt><dd>Spanish (native) · English (C1) · French (A2&ndash;B1)</dd></dl>
+        <dl class="field"><dt>Known for</dt><dd>The tech go-to — training, untangling hard problems, and making sure ideas travel</dd></dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BACKGROUND ================= -->
+<section id="background">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num mono">01</span>
+      <h2 class="sec-title display neon-cyan">Background</h2>
+    </div>
+    <div class="sec-rule"></div>
+
+    <div class="grid two">
+      <div>
+        <p class="lede">
+          I started out fixing machines and networks in a museum basement, which is
+          a more literal beginning than most IAM careers get. Consulting came next —
+          SIA, then KPMG — where I learned the trade on SailPoint by delivering for
+          banks and energy companies that do not enjoy surprises.
+        </p>
+        <p class="lede">
+          The four years at Holcim's EMEA Digital Center are the core of it. I was the
+          IdentityIQ technical reference for a platform covering more than 50,000
+          identities across over 40 countries: joiner-mover-leaver, segregation of
+          duties, the Red Hat SSO estate, the One Identity Safeguard privileged
+          access integration, and the CI/CD pipelines holding all of it together.
+        </p>
+      </div>
+      <div>
+        <p class="lede">
+          These days I am a Senior Consultant at iC Consult and the SailPoint technical
+          reference for the Spanish profit centre. Same job, wider blast radius.
+        </p>
+        <p class="lede">
+          The part I enjoy most is not the platform, it is the handover. I am a certified
+          soft-skills trainer, and I have spent most of my career being the person who
+          gets juniors from "what is an aggregation?" to solving complex tickets on
+          their own. Six months is my current record.
+        </p>
+        <div class="tags" style="margin-top:20px">
+          <span class="tag">Automates the boring parts</span>
+          <span class="tag">Documents the scary parts</span>
+          <span class="tag">Trains the next person</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ARSENAL ================= -->
+<section id="arsenal">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num mono">02</span>
+      <h2 class="sec-title display neon-cyan">Arsenal</h2>
+    </div>
+    <div class="sec-rule"></div>
+
+    <div class="legend" aria-label="Tag colour key">
+      <span><i class="k-hot"></i> Platforms I run</span>
+      <span><i class="k-cool"></i> Engineering &amp; cloud</span>
+      <span><i class="k-plain"></i> Standards &amp; processes</span>
+    </div>
+
+    <div class="grid two">
+      <article class="card">
+        <div class="kicker mono">Primary weapon</div>
+        <h3>Identity Governance</h3>
+        <div class="tags">
+          <span class="tag hot">SailPoint IdentityIQ</span>
+          <span class="tag hot">SailPoint Identity Security Cloud</span>
+          <span class="tag">Joiner-Mover-Leaver</span>
+          <span class="tag">RBAC</span>
+          <span class="tag">Segregation of Duties</span>
+          <span class="tag">Access Certification</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="kicker mono">Sidearm</div>
+        <h3>Privileged Access</h3>
+        <div class="tags">
+          <span class="tag hot">One Identity Safeguard</span>
+          <span class="tag hot">BeyondTrust Password Safe</span>
+          <span class="tag hot">Silverfort</span>
+          <span class="tag hot">Adaptive Shield</span>
+          <span class="tag">Password Vault</span>
+          <span class="tag">Privileged Access</span>
+          <span class="tag">SSPM</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="kicker mono">The front door</div>
+        <h3>Access Management</h3>
+        <div class="tags">
+          <span class="tag hot">Red Hat SSO / Keycloak</span>
+          <span class="tag">SAML</span>
+          <span class="tag">OAuth 2.0 / OIDC</span>
+          <span class="tag">Single Sign-On</span>
+          <span class="tag">MFA</span>
+          <span class="tag">Active Directory</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="kicker mono">Workshop</div>
+        <h3>Engineering &amp; Cloud</h3>
+        <div class="tags">
+          <span class="tag cool">Java</span>
+          <span class="tag cool">Python</span>
+          <span class="tag cool">PowerShell</span>
+          <span class="tag cool">REST &amp; SOAP</span>
+          <span class="tag cool">AWS (EC2, RDS)</span>
+          <span class="tag cool">ROSA / OpenShift</span>
+          <span class="tag cool">Ansible</span>
+          <span class="tag cool">Jenkins</span>
+          <span class="tag cool">GitHub</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOG ================= -->
+<section id="log">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num mono">03</span>
+      <h2 class="sec-title display neon-cyan">The Log</h2>
+    </div>
+    <div class="sec-rule"></div>
+
+    <div class="log">
+
+      <article class="entry active">
+        <div class="entry-head">
+          <h3>iC Consult</h3>
+          <span class="when">Feb 2025 — Present</span>
+        </div>
+        <div class="role">Senior Consultant — Identity &amp; Access Management · Madrid</div>
+        <ul>
+          <li>Technical reference for SailPoint across the Spanish profit centre — technical
+              assessments for new opportunities, and keeping SailPoint knowledge moving
+              through the team rather than sitting in one head.</li>
+          <li>IdentityIQ technical reference for a German banking group in the automotive
+              sector: complex technical requirements and critical incident resolution.</li>
+          <li>Ran the client's <strong>IdentityIQ upgrade from 8.4p3 to 8.5p1</strong> end to
+              end — assessment, design of the operation, and execution.</li>
+          <li>Mentoring junior consultants to the point of solving complex tasks within six
+              months of joining.</li>
+        </ul>
+        <div class="tags">
+          <span class="taglabel">Sectors</span>
+          <span class="tag sector">Automotive</span>
+          <span class="tag sector">Banking</span>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>Holcim EMEA Digital Center</h3>
+          <span class="when">Jun 2021 — Feb 2025</span>
+        </div>
+        <div class="role">User Life Cycle Expert · Madrid</div>
+        <p class="scope">SCOPE // 50,000+ identities · 40+ countries across Europe, Africa and the Middle East · 60+ integrated applications</p>
+        <ul>
+          <li>IdentityIQ technical reference for the L3 team — escalated and technically
+              complex incidents across the estate, plus tutoring the L2 team, onboarding
+              new L3 joiners and running technical training for stakeholders.</li>
+          <li>Owned the privileged access estate: <strong>One Identity Safeguard</strong>
+              (Password Vault, Privileged Access) for SAP privileged sessions and firefighter
+              access, <strong>Silverfort</strong> for Active Directory account protection and
+              <strong>Adaptive Shield</strong> for SaaS security posture.</li>
+          <li>Led the Identity Services roll-out into eleven further countries, and built
+              Segregation of Duties and critical access request detection that put the
+              Internal Control team into the approval process.</li>
+          <li>Administered <strong>Red Hat SSO (Keycloak)</strong> as the group access
+              management layer, and owned the CI/CD pipelines for both platforms — GitHub,
+              Jenkins and Ansible into AWS EC2/RDS and into ROSA — delivering every upgrade
+              and patch cycle across the full stack under ownership.</li>
+        </ul>
+        <div class="tags">
+          <span class="taglabel">Stack</span>
+          <span class="tag hot">SailPoint IdentityIQ</span>
+          <span class="tag hot">One Identity Safeguard</span>
+          <span class="tag hot">Red Hat SSO</span>
+          <span class="tag hot">Silverfort</span>
+          <span class="tag hot">Adaptive Shield</span>
+          <span class="tag cool">AWS</span>
+          <span class="tag cool">ROSA</span>
+          <span class="tag cool">Ansible</span>
+          <span class="tag cool">Jenkins</span>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>KPMG Spain</h3>
+          <span class="when">Apr 2020 — Jun 2021</span>
+        </div>
+        <div class="role">Cyber Security Consultant — Identity &amp; Access Management · Madrid</div>
+        <ul>
+          <li>One of the practice's SailPoint IdentityIQ people, on IAM projects for
+              Bankinter (ES), Grupo Salinas (MX) and Puig (ES).</li>
+          <li>Worked directly with business and IT stakeholders to turn requirements into
+              IdentityIQ designs, from workflow down to connector level.</li>
+          <li>Built bespoke client demonstrations supporting pre-sales.</li>
+        </ul>
+        <div class="tags">
+          <span class="taglabel">Sectors</span>
+          <span class="tag sector">Banking</span>
+          <span class="tag sector">Consumer Goods</span>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>SIA Group</h3>
+          <span class="when">Mar 2018 — Apr 2020</span>
+        </div>
+        <div class="role">Cyber Security Consultant — Identity &amp; Access Management · Alcorcón</div>
+        <ul>
+          <li>SailPoint design and implementation to client specification for
+              Santander Bank (ES) and CEPSA (ES).</li>
+          <li>Built the team's training environment and the technical documentation new
+              joiners were onboarded with — the first time I noticed I liked that part.</li>
+        </ul>
+        <div class="tags">
+          <span class="taglabel">Sectors</span>
+          <span class="tag sector">Banking</span>
+          <span class="tag sector">Energy</span>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="entry-head">
+          <h3>Informática Joisan</h3>
+          <span class="when">Dec 2017 — Feb 2018</span>
+        </div>
+        <div class="role">Systems Administrator &amp; Helpdesk · Museo Arqueológico Nacional, Madrid</div>
+        <ul>
+          <li>Systems, data centre and networks for the national archaeological museum,
+              plus end-user support. Where it all started.</li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= CREDENTIALS ================= -->
+<section id="credentials">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num mono">04</span>
+      <h2 class="sec-title display neon-cyan">Credentials</h2>
+    </div>
+    <div class="sec-rule"></div>
+
+    <div class="grid two">
+      <article class="card">
+        <div class="kicker mono">Certifications</div>
+        <h3>Vendor</h3>
+        <div class="rows" style="margin-top:14px">
+          <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityIQ Accelerator Pack</div></div></div>
+          <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityNow Implementation &amp; Administration: Essentials v19b</div></div></div>
+          <div class="row"><div><strong>SailPoint</strong><div class="sub">File Access Manager Introduction v8.0</div></div></div>
+          <div class="row"><div><strong>BeyondTrust</strong><div class="sub">Password Safe — BCIE Curriculum</div></div></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="kicker mono">Education</div>
+        <h3>Academic</h3>
+        <div class="rows" style="margin-top:14px">
+          <div class="row">
+            <div><strong>BSc Computer Engineering — Information Technology</strong>
+              <div class="sub">UNED · EQF Level 6, in progress</div></div>
+            <span class="when">2022 — 2028</span>
+          </div>
+          <div class="row">
+            <div><strong>HND Network Systems Administration</strong>
+              <div class="sub">I.E.S. Luis Vives · EQF Level 5</div></div>
+            <span class="when">2016 — 2018</span>
+          </div>
+          <div class="row">
+            <div><strong>Cybersecurity — "Luke, I'm Your Hacker"</strong>
+              <div class="sub">Universidad Politécnica de Madrid · 100/100</div></div>
+            <span class="when">2018</span>
+          </div>
+          <div class="row">
+            <div><strong>Internet of Things</strong>
+              <div class="sub">Ural Federal University · 85/100</div></div>
+            <span class="when">2019</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="kicker mono">Off the clock</div>
+      <h3>Trainer, organiser, volunteer</h3>
+      <p class="lede" style="margin-top:10px">
+        Certified soft-skills trainer through the Youth Trainers Academy (Train the Trainer,
+        2022) and the Leadership Summer School (2021).
+      </p>
+      <p class="lede">
+        Four years inside BEST — Board of European Students of Technology: Regional Adviser
+        to the European network (2021&ndash;22) after a term as Vice President for External
+        Services at BEST Madrid UPM (2020&ndash;21), plus organising international courses and
+        regional meetings along the way.
+      </p>
+      <p class="lede">
+        Before that, board member and founder of the Hardware SIG at the ACM UPM student
+        chapter, and a volunteer at COY15 / COP25 in Madrid.
+      </p>
+      <div class="tags">
+        <span class="tag">Non-formal education</span>
+        <span class="tag">Facilitation</span>
+        <span class="tag">Event organising</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <span class="sec-num mono">05</span>
+      <h2 class="sec-title display neon-cyan">Open a channel</h2>
+    </div>
+    <div class="sec-rule"></div>
+
+    <p class="lede">
+      Hiring for something between IGA and PAM? Stuck on an IdentityIQ upgrade?
+      Or just want to argue about whether birthright access is ever acceptable?
+      Any of those work.
+    </p>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <span class="lbl">Mail</span>
+        <a href="mailto:adrianlc96@gmail.com">adrianlc96@gmail.com</a>
+      </div>
+      <div class="contact-card">
+        <span class="lbl">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/adrian-lorente-iam" target="_blank" rel="noopener">adrian-lorente-iam</a>
+      </div>
+      <div class="contact-card">
+        <span class="lbl">GitHub</span>
+        <a href="https://github.com/MisterErre" target="_blank" rel="noopener">MisterErre</a>
+      </div>
+      <div class="contact-card">
+        <span class="lbl">Curriculum</span>
+        <a href="cv-adrian-lorente.pdf">Download PDF</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="quip">&gt; Access granted. Session logged.</p>
+    <p>&copy; <span id="yr">2026</span> Adrian Lorente · Built with LaTeX, HTML and too much neon.</p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
