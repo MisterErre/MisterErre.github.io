@@ -102,9 +102,14 @@ section{position:relative; padding:80px 0; z-index:2}
 nav{
   position:sticky; top:0; z-index:50;
   backdrop-filter:blur(12px);
-  background:linear-gradient(180deg, rgba(7,6,13,.94), rgba(7,6,13,.7));
+  background:linear-gradient(180deg, rgba(11,9,22,.95), rgba(11,9,22,.75));
   border-bottom:1px solid var(--line);
+  transition:transform .35s ease, opacity .35s ease;
 }
+/* Tucked away while the hero's own section buttons are on screen — two sets of
+   the same links at once is noise. Applied by JS, so a no-JS visitor keeps a
+   permanently visible nav. */
+nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
 .nav-in{
   max-width:var(--maxw); margin-inline:auto; padding:12px 22px;
   display:flex; align-items:center; justify-content:space-between; gap:18px;
@@ -123,6 +128,11 @@ nav{
   min-height:92vh; display:flex; flex-direction:column; justify-content:center;
   padding:70px 0 60px; overflow:hidden;
 }
+/* The decorative layers are positioned, so they paint above the static content
+   that follows them and swallow every hover and click. They must sit behind it
+   and be transparent to the pointer. */
+.hero .wrap{position:relative; z-index:3}
+.horizon,.sun{pointer-events:none}
 .horizon{
   position:absolute; inset:auto 0 0 0; height:52vh; z-index:0; overflow:hidden;
   mask-image:linear-gradient(to bottom, transparent, #000 38%);
@@ -161,25 +171,47 @@ nav{
 .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:36px}
 .stat{
   border:1px solid var(--line); border-radius:3px; padding:14px 16px;
-  background:linear-gradient(180deg, rgba(255,30,66,.05), rgba(18,14,33,.55));
+  background:linear-gradient(180deg, rgba(255,47,82,.07), rgba(26,21,48,.6));
+  transition:.2s ease;
 }
+.stat:hover{
+  border-color:rgba(255,47,82,.6);
+  box-shadow:0 0 26px rgba(255,47,82,.2);
+  transform:translateY(-2px);
+}
+.stat:hover b{text-shadow:0 0 22px rgba(255,47,82,.95)}
 .stat b{display:block; font-family:'Bevan',serif; font-size:1.55rem; color:#fff;
   text-shadow:0 0 16px rgba(255,30,66,.75); line-height:1.1}
 .stat span{font-size:.68rem; letter-spacing:.15em; color:var(--dim); text-transform:uppercase}
 
-.cta{display:flex; gap:14px; flex-wrap:wrap}
+/* Grid rather than flex: equal columns give the five buttons an identical
+   width regardless of how long each label is. */
+.cta{
+  display:grid; gap:12px; max-width:860px;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+}
 .btn{
-  display:inline-block; padding:11px 22px; border-radius:2px;
+  display:inline-flex; align-items:center; justify-content:center; gap:.7em;
+  padding:12px 18px; border-radius:2px; text-align:center;
   font-family:'Share Tech Mono',monospace; font-size:.82rem;
   letter-spacing:.16em; text-transform:uppercase;
   border:1px solid var(--red); color:#fff;
-  background:rgba(255,30,66,.08);
-  box-shadow:0 0 16px rgba(255,30,66,.28), inset 0 0 16px rgba(255,30,66,.09);
+  background:rgba(255,47,82,.1);
+  box-shadow:0 0 16px rgba(255,47,82,.3), inset 0 0 16px rgba(255,47,82,.1);
   transition:.18s ease;
 }
-.btn:hover{background:rgba(255,30,66,.2); box-shadow:0 0 30px rgba(255,30,66,.55); color:#fff}
-.btn.ghost{border-color:var(--line); background:transparent; box-shadow:none; color:var(--muted)}
-.btn.ghost:hover{border-color:var(--cyan); color:var(--cyan); box-shadow:0 0 20px rgba(34,228,245,.35)}
+/* Every button lights up cyan on hover, matching the contact cards. */
+.btn:hover{
+  border-color:var(--cyan); color:var(--cyan);
+  background:rgba(58,234,255,.1);
+  box-shadow:0 0 28px rgba(58,234,255,.45), inset 0 0 20px rgba(58,234,255,.1);
+  transform:translateY(-2px);
+}
+.btn:active{transform:translateY(1px); box-shadow:0 0 14px rgba(58,234,255,.4)}
+.btn:focus-visible{outline:2px solid var(--cyan); outline-offset:3px}
+/* One button style only. A `.ghost` variant used to live here and silently beat
+   `.btn:hover` — same specificity, declared later — so ghost buttons never lit
+   up. Every button is now red at rest and cyan on hover. */
 
 /* ---------- dossier ---------- */
 .dossier{
@@ -229,10 +261,13 @@ nav{
      .soft   amber  — human skills; warm on purpose, so the one non-technical
                       row on the page does not read as just another stack   */
 .tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:4px; align-items:center}
+/* The plain tag is the "standards & processes" class. It stays the quietest of
+   the five, but it still has to read as neon rather than as disabled text. */
 .tag{
   font-family:'Share Tech Mono',monospace; font-size:.72rem; letter-spacing:.05em;
-  padding:4px 10px; border:1px solid var(--line); border-radius:2px;
-  color:var(--muted); background:rgba(255,255,255,.04);
+  padding:4px 10px; border:1px solid rgba(196,186,232,.45); border-radius:2px;
+  color:#d7cff0; background:rgba(196,186,232,.07);
+  box-shadow:0 0 10px rgba(196,186,232,.14), inset 0 0 10px rgba(196,186,232,.05);
 }
 .tag.hot{border-color:rgba(255,47,82,.65); color:var(--red-soft); background:rgba(255,47,82,.09)}
 .tag.cool{border-color:rgba(58,234,255,.5); color:var(--cyan); background:rgba(58,234,255,.07)}
@@ -246,13 +281,13 @@ nav{
 
 .legend{
   display:flex; flex-wrap:wrap; gap:18px; margin:-18px 0 30px;
-  font-family:'Share Tech Mono',monospace; font-size:.72rem; color:var(--dim);
+  font-family:'Share Tech Mono',monospace; font-size:.74rem; color:var(--muted);
 }
 .legend span{display:inline-flex; align-items:center; gap:7px}
 .legend i{width:9px; height:9px; border-radius:2px; display:inline-block}
-.legend .k-hot{background:var(--red); box-shadow:0 0 8px var(--red)}
-.legend .k-cool{background:var(--cyan); box-shadow:0 0 8px var(--cyan)}
-.legend .k-plain{background:#6d6490}
+.legend .k-hot{background:var(--red); box-shadow:0 0 10px var(--red)}
+.legend .k-cool{background:var(--cyan); box-shadow:0 0 10px var(--cyan)}
+.legend .k-plain{background:#d7cff0; box-shadow:0 0 10px rgba(215,207,240,.9)}
 
 /* ---------- timeline ---------- */
 .log{position:relative; padding-left:30px}
@@ -316,6 +351,11 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
 .reveal.in{opacity:1; transform:none}
 
+@media (max-width:760px){
+  /* Two per row rather than five squeezed ones. */
+  .cta{grid-template-columns:repeat(2,minmax(0,1fr)); max-width:none}
+}
+
 @media (max-width:640px){
   section{padding:60px 0}
   .field{border-right:none}
@@ -344,7 +384,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 
 <nav>
   <div class="nav-in">
-    <span class="brand display neon-red">A. Lorente</span>
+    <span class="brand display neon-red">Adrian Lorente</span>
     <div class="nav-links">
       <a href="#background">Background</a>
       <a href="#arsenal">Arsenal</a>
@@ -377,9 +417,11 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
     </div>
 
     <div class="cta">
-      <a class="btn" href="#log">Open the log</a>
-      <!-- Opens in a new tab: reading the CV should never replace the page. -->
-      <a class="btn ghost" href="cv-adrian-lorente.pdf" target="_blank" rel="noopener">Read the CV (PDF)</a>
+      <a class="btn" href="#background">Background</a>
+      <a class="btn" href="#arsenal">Arsenal</a>
+      <a class="btn" href="#log">The Log</a>
+      <a class="btn" href="#credentials">Credentials</a>
+      <a class="btn" href="#contact">Contact</a>
     </div>
   </div>
 </header>
@@ -441,9 +483,9 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
           their own. Six months is my current record.
         </p>
         <div class="tags" style="margin-top:20px">
-          <span class="tag">Automates the boring parts</span>
-          <span class="tag">Documents the scary parts</span>
-          <span class="tag">Trains the next person</span>
+          <span class="tag soft">Automates the boring parts</span>
+          <span class="tag soft">Documents the scary parts</span>
+          <span class="tag soft">Trains the next person</span>
         </div>
       </div>
     </div>
@@ -781,6 +823,16 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Hide the sticky nav while the hero's own section buttons are still on screen.
+const nav = document.querySelector('nav');
+const cta = document.querySelector('.cta');
+if (nav && cta) {
+  const navIO = new IntersectionObserver(([entry]) => {
+    nav.classList.toggle('tucked', entry.isIntersecting);
+  }, { threshold: 0 });
+  navIO.observe(cta);
+}
 
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
