@@ -46,10 +46,6 @@
 }
 </script>
 
-<!-- Marks JS as available before first paint, so scroll reveals only ever
-     hide content when there is a script around to show it again. -->
-<script>document.documentElement.classList.add('js')</script>
-
 <style>
 @font-face{
   font-family:'Bevan'; font-style:normal; font-weight:400; font-display:swap;
@@ -64,74 +60,57 @@
   src:url(fonts/inter-latin-wght-normal.woff2) format('woff2');
 }
 
+
+/* ==========================================================================
+   One idea: the neon sign and the paperwork.
+   The hero is the sign — glow, flicker, the synthwave floor, scanlines. That
+   is the one loud thing on the page. Everything below it is a calm CV on a
+   dark page: plain headings, readable body text, and colour used only where
+   it means something (dates, and the semantic tag colours).
+   ========================================================================== */
+
 :root{
   color-scheme:dark;
   --void:#0b0916;
-  --panel:#1a1530;
-  --line:#3d2f66;
+  --line:#2e2550;
   --red:#ff2f52;
   --red-soft:#ff8095;
   --cyan:#3aeaff;
   --violet:#c46bf5;
   --amber:#ffb648;
   --ink:#f6f3fc;
-  --muted:#bcb4d6;
-  --dim:#948cb3;
+  --muted:#c3bcdb;
+  --dim:#9a92b8;
   --maxw:1080px;
+  --gutter:22px;
+  --nav-h:56px;
 }
 
 *,*::before,*::after{box-sizing:border-box}
 /* Anchor jumps land below the sticky nav instead of under it. */
-html{scroll-behavior:smooth; scroll-padding-top:64px}
+html{scroll-behavior:smooth; scroll-padding-top:calc(var(--nav-h) + 12px); -webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--void); color:var(--ink);
   font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
-  font-weight:300; line-height:1.65; letter-spacing:.005em;
+  /* 400, not 300: light weights go spindly as light-on-dark text, worst on phones. */
+  font-size:1rem; font-weight:400; line-height:1.65;
   overflow-x:hidden;
 }
-img{max-width:100%}
 a{color:var(--cyan); text-decoration:none}
 a:hover{color:var(--red-soft)}
-/* One focus ring for everything, in the hover colour, so keyboard users get
-   the same "lit" signal as mouse users. */
 :focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:2px}
 h1,h2,h3{text-wrap:balance}
 p,li{text-wrap:pretty}
+p{margin:0 0 1em}
 
 .skip{
   position:absolute; left:12px; top:-60px; z-index:100;
-  padding:10px 16px; background:var(--panel); border:1px solid var(--cyan);
-  font-family:'Share Tech Mono',monospace; letter-spacing:.12em; text-transform:uppercase; font-size:.8rem;
+  padding:10px 16px; background:var(--void); border:1px solid var(--cyan); font-weight:500;
 }
 .skip:focus{top:12px}
 
-/* ---------- atmosphere ---------- */
-.scanlines,.vignette{position:fixed; inset:0; pointer-events:none; z-index:60}
-/* No mix-blend-mode: multiplying pure black is identical to plain alpha, and a
-   full-screen blended layer forces an expensive recomposite on every scroll. */
-.scanlines{
-  background:repeating-linear-gradient(to bottom,
-    rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px,
-    transparent 1px, transparent 3px);
-  opacity:.28;
-}
-.vignette{
-  background:radial-gradient(ellipse at 50% 40%, transparent 52%, rgba(0,0,0,.5) 100%);
-}
-.flicker{animation:flicker 7s infinite steps(1)}
-@keyframes flicker{
-  0%,96%,100%{opacity:1}
-  97%{opacity:.72}
-  98%{opacity:1}
-  99%{opacity:.85}
-}
-
-/* ---------- type ---------- */
-.display{
-  font-family:'Bevan',Georgia,serif; font-weight:400;
-  letter-spacing:.02em; line-height:1.05; text-transform:uppercase;
-}
-.mono{font-family:'Share Tech Mono',ui-monospace,monospace; letter-spacing:.09em}
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gutter)}
+.mono{font-family:'Share Tech Mono',ui-monospace,monospace}
 
 .neon-red{
   color:#fff;
@@ -141,82 +120,53 @@ p,li{text-wrap:pretty}
     0 0 32px rgba(255,30,66,.75),
     0 0 70px rgba(255,30,66,.45);
 }
-.neon-cyan{
-  color:#eafdff;
-  text-shadow:0 0 6px var(--cyan), 0 0 22px rgba(34,228,245,.6);
-}
-
-/* ---------- layout ---------- */
-.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:22px}
-section{position:relative; padding:80px 0; z-index:2}
-.sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:8px; flex-wrap:wrap}
-.sec-num{font-size:.72rem; color:var(--red); letter-spacing:.28em}
-.sec-title{font-size:clamp(1.5rem,4.2vw,2.35rem); margin:0}
-.sec-rule{
-  height:1px; margin:20px 0 40px;
-  background:linear-gradient(90deg,var(--red),var(--violet) 40%,transparent 85%);
-  box-shadow:0 0 14px rgba(255,30,66,.5);
-}
-.lede{color:var(--muted); max-width:62ch; margin:0 0 6px}
 
 /* ---------- nav ---------- */
 nav{
   position:sticky; top:0; z-index:50;
-  backdrop-filter:blur(12px);
-  background:linear-gradient(180deg, rgba(11,9,22,.95), rgba(11,9,22,.75));
+  background:rgba(11,9,22,.86);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
-  transition:transform .35s ease, opacity .35s ease, visibility 0s;
-}
-/* Tucked away while the hero's own section buttons are on screen — two sets of
-   the same links at once is noise. Applied by JS, so a no-JS visitor keeps a
-   permanently visible nav. `visibility` (flipped after the slide finishes)
-   takes the hidden links out of the tab order too; opacity alone left them
-   focusable while invisible. */
-nav.tucked{
-  transform:translateY(-105%); opacity:0; visibility:hidden;
-  transition:transform .35s ease, opacity .35s ease, visibility 0s .35s;
 }
 .nav-in{
-  max-width:var(--maxw); margin-inline:auto; padding:12px 22px;
+  max-width:var(--maxw); margin-inline:auto; padding:0 var(--gutter); min-height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between; gap:18px;
 }
-.brand{font-size:.95rem; letter-spacing:.16em; white-space:nowrap}
-.nav-links{display:flex; gap:22px; flex-wrap:wrap}
+.brand{font-family:'Bevan',Georgia,serif; font-size:1rem; color:#fff; white-space:nowrap}
+.nav-links{display:flex; gap:26px; margin:0; padding:0; list-style:none}
 .nav-links a{
-  font-family:'Share Tech Mono',monospace; font-size:.8rem;
-  letter-spacing:.16em; color:var(--muted); text-transform:uppercase;
-  padding-bottom:3px; border-bottom:1px solid transparent;
+  display:block; padding:16px 0 14px; color:var(--muted); font-size:.92rem; font-weight:500;
+  border-bottom:2px solid transparent;
 }
-.nav-links a:hover{color:var(--ink); border-bottom-color:var(--red); text-shadow:0 0 10px rgba(255,30,66,.7)}
+.nav-links a:hover{color:var(--ink); border-bottom-color:var(--red)}
 
-/* ---------- hero ---------- */
+/* ---------- hero: the sign ---------- */
 .hero{
-  /* svh: the small viewport, so mobile browser chrome cannot push the CTA row
-     below the fold. vh stays as the fallback for older engines. */
-  min-height:92vh; min-height:92svh; display:flex; flex-direction:column; justify-content:center;
-  padding:70px 0 60px; overflow:hidden;
+  position:relative; overflow:hidden; isolation:isolate;
+  min-height:calc(86vh - var(--nav-h)); min-height:calc(86svh - var(--nav-h));
+  display:flex; flex-direction:column; justify-content:center;
+  padding:72px 0 120px;
 }
-/* The decorative layers are positioned, so they paint above the static content
-   that follows them and swallow every hover and click. They must sit behind it
-   and be transparent to the pointer. */
-.hero .wrap{position:relative; z-index:3}
-.horizon,.sun{pointer-events:none}
+.hero .wrap{position:relative; z-index:3; width:100%}
+.horizon,.sun,.hero::after{pointer-events:none}
+/* CRT scanlines live on the sign only. Over the whole page they cost a
+   full-screen composited layer and blurred every line of body text. */
+.hero::after{
+  content:''; position:absolute; inset:0; z-index:4;
+  background:repeating-linear-gradient(to bottom, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+  opacity:.3;
+}
 /* The synthwave floor. The camera (perspective-origin) sits on the horizon,
    the top edge of this box, and the plane hinges there and tips towards the
-   viewer. The earlier version put the vanishing point on the plane's *bottom*
-   edge, which projected the whole grid onto a single hairline: it never
-   actually rendered. Perspective scales with the box (both 52vh), so the
-   geometry is identical on every screen height. */
+   viewer. Perspective equals the box height, so the geometry is the same on
+   every screen. */
 .horizon{
   position:absolute; inset:auto 0 0 0; height:52vh; z-index:0; overflow:hidden;
   perspective:52vh; perspective-origin:50% 0;
-  /* Long, soft fade: the grid sits behind the intro copy and must stay
-     atmosphere, not a ruled sheet the text has to fight. */
   --fade:linear-gradient(to bottom, transparent, rgba(0,0,0,.35) 40%, #000 92%);
   mask-image:var(--fade); -webkit-mask-image:var(--fade);
 }
 .horizon::before{
-  /* Starts two rows above the horizon so the drift never exposes an edge. */
   content:''; position:absolute; left:-50%; right:-50%; top:-124px; height:calc(100% + 124px);
   background:
     repeating-linear-gradient(90deg, rgba(196,107,245,.72) 0 1px, transparent 1px 84px),
@@ -227,515 +177,424 @@ nav.tucked{
   animation:drift 9s linear infinite;
   will-change:transform;
 }
-/* Slides the floor towards the viewer by exactly one row (62px) along its own
-   surface, so the loop is seamless. Animating transform stays on the
-   compositor; animating background-position repainted every frame. */
+/* One row (62px) along the plane's own surface, so the loop is seamless. */
 @keyframes drift{
   from{transform:rotateX(60deg) translateY(0)}
   to  {transform:rotateX(60deg) translateY(62px)}
 }
 .sun{
-  position:absolute; left:50%; bottom:34vh; translate:-50% 0;
-  width:min(620px,90vw); aspect-ratio:1; border-radius:50%; z-index:0;
-  background:radial-gradient(circle at 50% 60%, rgba(255,47,82,.42), rgba(196,107,245,.22) 55%, transparent 70%);
+  position:absolute; left:50%; bottom:30vh; translate:-50% 0;
+  width:min(620px,92vw); aspect-ratio:1; border-radius:50%; z-index:0;
+  background:radial-gradient(circle at 50% 60%, rgba(255,47,82,.4), rgba(196,107,245,.2) 55%, transparent 70%);
   filter:blur(6px);
 }
 
-.eyebrow{
-  font-size:.78rem; letter-spacing:.32em; color:var(--red);
-  text-transform:uppercase; margin-bottom:18px;
-}
 .hero h1{
-  font-size:clamp(2.7rem,10.5vw,6.6rem); margin:0 0 14px;
+  font-family:'Bevan',Georgia,serif; font-weight:400; text-transform:uppercase;
+  font-size:clamp(3rem,12.5vw,6.6rem); line-height:1; letter-spacing:.01em;
+  margin:0 0 22px;
 }
-.tagline{
-  font-size:clamp(.82rem,2.3vw,1.05rem); letter-spacing:.2em;
-  color:var(--cyan); text-transform:uppercase; margin:0 0 26px;
+.flicker{animation:flicker 7s infinite steps(1)}
+@keyframes flicker{
+  0%,96%,100%{opacity:1}
+  97%{opacity:.72}
+  98%{opacity:1}
+  99%{opacity:.85}
 }
-.hero-note{max-width:56ch; color:var(--muted); margin:0 0 34px}
+.role-line{
+  font-size:clamp(1.1rem,2.6vw,1.35rem); font-weight:500; line-height:1.4;
+  color:#dffbff; text-shadow:0 0 14px rgba(58,234,255,.55);
+  margin:0 0 18px; max-width:34ch;
+}
+.hero-note{max-width:54ch; color:var(--muted); font-size:1.05rem; margin:0 0 32px}
 
-.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:36px}
-.stat{
-  border:1px solid var(--line); border-radius:3px; padding:14px 16px;
-  background:linear-gradient(180deg, rgba(255,47,82,.07), rgba(26,21,48,.6));
-  transition:.2s ease;
-}
-.stat:hover{
-  border-color:rgba(255,47,82,.6);
-  box-shadow:0 0 26px rgba(255,47,82,.2);
-  transform:translateY(-2px);
-}
-.stat:hover b{text-shadow:0 0 22px rgba(255,47,82,.95)}
-.stat b{display:block; font-family:'Bevan',serif; font-size:1.55rem; color:#fff;
-  text-shadow:0 0 16px rgba(255,30,66,.75); line-height:1.1}
-.stat span{display:block; margin-top:4px; font-size:.68rem; line-height:1.4; letter-spacing:.15em; color:var(--dim); text-transform:uppercase}
-
-/* Grid rather than flex: equal columns give the five buttons an identical
-   width regardless of how long each label is. */
-.cta{
-  display:grid; gap:12px; max-width:860px;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-}
+.actions{display:flex; flex-wrap:wrap; gap:12px}
 .btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:.7em;
-  padding:12px 18px; border-radius:2px; text-align:center;
-  font-family:'Share Tech Mono',monospace; font-size:.82rem;
-  letter-spacing:.16em; text-transform:uppercase;
-  border:1px solid var(--red); color:#fff;
-  background:rgba(255,47,82,.1);
-  box-shadow:0 0 16px rgba(255,47,82,.3), inset 0 0 16px rgba(255,47,82,.1);
-  transition:.18s ease;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:48px; padding:12px 22px; border-radius:3px;
+  font-size:1rem; font-weight:500; color:#fff;
+  border:1px solid var(--red); background:rgba(255,47,82,.12);
+  box-shadow:0 0 18px rgba(255,47,82,.32), inset 0 0 16px rgba(255,47,82,.1);
+  transition:color .18s, border-color .18s, background-color .18s, box-shadow .18s;
 }
-/* Every button lights up cyan on hover, matching the contact cards. */
 .btn:hover{
-  border-color:var(--cyan); color:var(--cyan);
-  background:rgba(58,234,255,.1);
-  box-shadow:0 0 28px rgba(58,234,255,.45), inset 0 0 20px rgba(58,234,255,.1);
-  transform:translateY(-2px);
+  color:var(--cyan); border-color:var(--cyan); background:rgba(58,234,255,.1);
+  box-shadow:0 0 26px rgba(58,234,255,.4), inset 0 0 18px rgba(58,234,255,.1);
 }
-.btn:active{transform:translateY(1px); box-shadow:0 0 14px rgba(58,234,255,.4)}
-.btn:focus-visible{outline:2px solid var(--cyan); outline-offset:3px}
-/* One button style only. A `.ghost` variant used to live here and silently beat
-   `.btn:hover` — same specificity, declared later — so ghost buttons never lit
-   up. Every button is now red at rest and cyan on hover. */
+.btn.quiet{border-color:rgba(246,243,252,.35); background:rgba(11,9,22,.55); box-shadow:none}
 
-/* ---------- dossier ---------- */
-.dossier{
-  border:1px solid var(--line); border-radius:4px; overflow:hidden;
-  background:
-    linear-gradient(180deg, rgba(255,30,66,.07), transparent 30%),
-    var(--panel);
-  box-shadow:0 0 0 1px rgba(255,30,66,.1), 0 24px 60px rgba(0,0,0,.6);
+/* ---------- sections: the paperwork ---------- */
+.sec{padding:80px 0; border-top:1px solid var(--line)}
+/* Wide screens: section name in a left column, content beside it — the way a
+   printed CV is laid out. Narrow screens stack the two. */
+@media (min-width:900px){
+  .sec .wrap{display:grid; grid-template-columns:190px minmax(0,1fr); column-gap:56px}
+  .sec h2{position:sticky; top:calc(var(--nav-h) + 24px); align-self:start}
 }
-.dossier-top{
-  display:flex; justify-content:space-between; align-items:center; gap:12px;
-  padding:12px 18px; border-bottom:1px solid var(--line);
-  background:rgba(255,30,66,.07); flex-wrap:wrap;
+.sec h2{
+  font-family:'Bevan',Georgia,serif; font-weight:400;
+  font-size:clamp(1.45rem,3.4vw,1.7rem); line-height:1.15; letter-spacing:.01em;
+  color:#eafdff; text-shadow:0 0 16px rgba(58,234,255,.4);
+  margin:0 0 28px;
 }
-.dossier-top .mono{font-size:.74rem; color:var(--red-soft); letter-spacing:.2em}
-.badge{
-  font-family:'Share Tech Mono',monospace; font-size:.68rem; letter-spacing:.18em;
-  padding:3px 10px; border:1px solid var(--cyan); color:var(--cyan);
-  border-radius:2px; text-transform:uppercase;
-}
-/* 280px min: the six fields fall as 3×2 or 2×3 rather than a ragged 4+2. */
-.dossier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:0; margin:0}
-.field{padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
-.field:last-child{border-right:none}
-.field dt{font-size:.66rem; letter-spacing:.2em; color:var(--dim); text-transform:uppercase; margin-bottom:6px}
-.field dd{margin:0; font-size:.94rem; color:var(--ink)}
+.prose{max-width:66ch; color:var(--muted)}
+.prose strong{color:var(--ink); font-weight:600}
+h3{font-family:'Bevan',Georgia,serif; font-weight:400; font-size:1.15rem; line-height:1.3; color:#fff; margin:0}
+.sub-h{margin:40px 0 14px}
+.facts{margin:24px 0 0; color:var(--muted)}
+.facts dt{display:inline; color:var(--ink); font-weight:600}
+.facts dd{display:inline; margin:0}
 
-/* ---------- cards ---------- */
-.grid{display:grid; gap:18px}
-.grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.card{
-  border:1px solid var(--line); border-radius:4px; padding:22px;
-  background:linear-gradient(180deg, rgba(196,107,245,.12), rgba(26,21,48,.75));
-  transition:.2s ease;
-}
-.card:hover{border-color:rgba(255,30,66,.55); box-shadow:0 0 26px rgba(255,30,66,.18); transform:translateY(-2px)}
-.card h3{
-  font-family:'Bevan',serif; font-weight:400; text-transform:uppercase;
-  font-size:1.02rem; letter-spacing:.05em; margin:0 0 4px; color:#fff;
-}
-.card .kicker{font-size:.68rem; letter-spacing:.2em; color:var(--red); text-transform:uppercase; margin-bottom:14px}
-
+/* ---------- tags ---------- */
 /* Tag colour is semantic, not decorative:
      .hot    red    — platforms and products actually operated
      .cool   cyan   — engineering, cloud and tooling
      (plain) grey   — standards, protocols and processes
      .sector violet — industries delivered into
-     .soft   amber  — human skills; warm on purpose, so the one non-technical
-                      row on the page does not read as just another stack   */
-.tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:4px; align-items:center}
-/* The plain tag is the "standards & processes" class. It stays the quietest of
-   the five, but it still has to read as neon rather than as disabled text. */
+     .soft   amber  — human skills                                         */
+.tags{display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none}
 .tag{
-  font-family:'Share Tech Mono',monospace; font-size:.72rem; letter-spacing:.05em;
-  padding:4px 10px; border:1px solid rgba(196,186,232,.45); border-radius:2px;
-  color:#d7cff0; background:rgba(196,186,232,.07);
-  box-shadow:0 0 10px rgba(196,186,232,.14), inset 0 0 10px rgba(196,186,232,.05);
+  font-family:'Share Tech Mono',ui-monospace,monospace; font-size:.84rem; line-height:1.3;
+  padding:5px 10px; border:1px solid rgba(196,186,232,.42); border-radius:3px;
+  color:#ddd6f3; background:rgba(196,186,232,.06);
 }
 .tag.hot{border-color:rgba(255,47,82,.65); color:var(--red-soft); background:rgba(255,47,82,.09)}
 .tag.cool{border-color:rgba(58,234,255,.5); color:var(--cyan); background:rgba(58,234,255,.07)}
 .tag.sector{border-color:rgba(196,107,245,.6); color:#dcaaff; background:rgba(196,107,245,.1)}
-.tag.soft{border-color:rgba(255,182,72,.6); color:#ffd08f; background:rgba(255,182,72,.1)}
+.tag.soft{border-color:rgba(255,182,72,.55); color:#ffd08f; background:rgba(255,182,72,.09)}
+/* Label in its own column, so a long tag list wraps under itself rather
+   than back under the label. */
+.tag-row{display:grid; grid-template-columns:4.2rem minmax(0,1fr); align-items:baseline; gap:8px; margin-top:14px}
+.tag-row > span{font-size:.88rem; color:var(--dim)}
 
-.taglabel{
-  font-size:.64rem; letter-spacing:.22em; text-transform:uppercase;
-  color:var(--dim); margin-right:4px;
+/* ---------- skills ---------- */
+.key{display:flex; flex-wrap:wrap; gap:6px 22px; margin:0 0 30px; padding:0; list-style:none; font-size:.9rem; color:var(--muted)}
+.key li{display:inline-flex; align-items:center; gap:8px}
+.key i{width:10px; height:10px; border-radius:2px; flex:none}
+.key .k-hot{background:var(--red)}
+.key .k-cool{background:var(--cyan)}
+.key .k-plain{background:#ddd6f3}
+.skills{margin:0; display:grid; gap:28px}
+.skills dt{font-weight:600; margin-bottom:10px}
+.skills dd{margin:0}
+@media (min-width:700px){
+  .skills > div{display:grid; grid-template-columns:200px minmax(0,1fr); gap:20px}
+  .skills dt{margin:4px 0 0}
 }
 
-.legend{
-  display:flex; flex-wrap:wrap; gap:18px; margin:-18px 0 30px;
-  font-family:'Share Tech Mono',monospace; font-size:.74rem; color:var(--muted);
-}
-.legend span{display:inline-flex; align-items:center; gap:7px}
-.legend i{width:9px; height:9px; border-radius:2px; display:inline-block}
-.legend .k-hot{background:var(--red); box-shadow:0 0 10px var(--red)}
-.legend .k-cool{background:var(--cyan); box-shadow:0 0 10px var(--cyan)}
-.legend .k-plain{background:#d7cff0; box-shadow:0 0 10px rgba(215,207,240,.9)}
-
-/* ---------- timeline ---------- */
-.log{position:relative; padding-left:30px}
+/* ---------- experience ---------- */
+/* An ordered list: it really is a sequence, so the rail and dots carry meaning. */
+.log{list-style:none; margin:0; padding:0 0 0 28px; position:relative}
 .log::before{
-  content:''; position:absolute; left:7px; top:6px; bottom:6px; width:1px;
-  background:linear-gradient(180deg,var(--red),var(--violet),transparent);
-  box-shadow:0 0 12px rgba(255,30,66,.6);
+  content:''; position:absolute; left:5px; top:10px; bottom:10px; width:1px;
+  background:linear-gradient(180deg,var(--red),var(--violet) 60%,transparent);
 }
-.entry{position:relative; margin-bottom:30px}
+.entry{position:relative; padding-bottom:44px}
+.entry:last-child{padding-bottom:0}
 .entry::before{
-  content:''; position:absolute; left:-27px; top:9px;
-  width:9px; height:9px; border-radius:50%;
-  background:var(--violet); box-shadow:0 0 12px var(--violet);
+  content:''; position:absolute; left:-28px; top:8px;
+  width:11px; height:11px; border-radius:50%;
+  background:var(--void); border:2px solid var(--violet);
 }
-.entry.active::before{background:var(--red); box-shadow:0 0 16px var(--red); animation:pulse 2.2s infinite ease-in-out}
-@keyframes pulse{0%,100%{transform:scale(1); opacity:1} 50%{transform:scale(1.45); opacity:.65}}
-.entry-head{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:baseline}
-/* No text-transform here on purpose: brands like "iC Consult" carry their own
-   casing, and uppercasing them silently rebrands the employer. */
-.entry h3{font-family:'Bevan',serif; font-weight:400; font-size:1.18rem; margin:0; color:#fff; letter-spacing:.02em}
-.entry .when{font-family:'Share Tech Mono',monospace; font-size:.78rem; color:var(--cyan); letter-spacing:.08em; white-space:nowrap}
-.entry .role{color:var(--red-soft); font-size:.9rem; margin:3px 0 10px; letter-spacing:.02em}
-.entry p{margin:0 0 12px; color:var(--muted)}
-.entry ul{margin:0 0 12px; padding-left:18px; color:var(--muted)}
-.entry li{margin-bottom:6px}
+.entry.current::before{background:var(--red); border-color:var(--red); box-shadow:0 0 12px var(--red)}
+.entry-head{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:2px 16px}
+/* No text-transform: brands like "iC Consult" carry their own casing. */
+.entry h3{font-size:1.2rem}
+.when{font-family:'Share Tech Mono',ui-monospace,monospace; font-size:.9rem; color:var(--cyan); white-space:nowrap}
+.role{color:var(--red-soft); margin:4px 0 14px}
+.scope{color:var(--dim); font-size:.94rem; border-left:2px solid var(--red); padding-left:12px; margin:0 0 14px; max-width:66ch}
+.entry ul{margin:0 0 4px; padding-left:18px; color:var(--muted); max-width:70ch}
+.entry li{margin-bottom:8px}
 .entry li::marker{color:var(--red)}
-.scope{
-  font-family:'Share Tech Mono',monospace; font-size:.76rem; color:var(--dim);
-  border-left:2px solid var(--red); padding-left:12px; margin:0 0 12px;
-}
+.entry strong{color:var(--ink); font-weight:600}
 
-/* ---------- lists ---------- */
-.rows{display:grid; gap:14px}
-.row{
-  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  padding-bottom:14px; border-bottom:1px solid var(--line);
-}
-.row:last-child{border-bottom:none}
-.row > div:first-child{flex:1 1 240px; min-width:0}
-.row strong{color:#fff; font-weight:500}
-.row .sub{color:var(--dim); font-size:.86rem}
-.row .when{flex:0 0 auto; font-family:'Share Tech Mono',monospace; font-size:.78rem; color:var(--cyan); white-space:nowrap}
+/* ---------- education ---------- */
+.columns{display:grid; gap:40px}
+@media (min-width:760px){ .columns{grid-template-columns:1fr 1fr} }
+.columns h3{margin-bottom:14px}
+.rows{list-style:none; margin:0; padding:0}
+.rows li{padding:12px 0; border-bottom:1px solid var(--line)}
+.rows li:first-child{padding-top:0}
+.rows li:last-child{border-bottom:none}
+.rows strong{display:block; font-weight:600; color:var(--ink); line-height:1.4}
+.rows .sub{display:block; color:var(--dim); font-size:.92rem; line-height:1.45; margin-top:2px}
+.rows .when{display:block; font-size:.85rem; margin-top:4px}
 
 /* ---------- contact ---------- */
-.contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:26px}
-.contact-card{
-  border:1px solid var(--line); border-radius:4px; padding:20px; text-align:center;
-  background:rgba(18,14,33,.5); transition:.2s ease;
+.contact{list-style:none; margin:28px 0 0; padding:0; max-width:620px; border-top:1px solid var(--line)}
+.contact a{
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+  min-height:56px; padding:12px 2px; border-bottom:1px solid var(--line); color:var(--ink);
 }
-.contact-card:hover{border-color:var(--cyan); box-shadow:0 0 24px rgba(34,228,245,.22)}
-.contact-card .lbl{font-size:.66rem; letter-spacing:.22em; color:var(--dim); text-transform:uppercase; display:block; margin-bottom:8px}
-.contact-card a{font-family:'Share Tech Mono',monospace; font-size:.9rem; word-break:break-word}
+.contact span{color:var(--dim)}
+.contact b{font-family:'Share Tech Mono',ui-monospace,monospace; font-weight:400; color:var(--cyan); overflow-wrap:anywhere; text-align:right}
+.contact a:hover b{color:var(--red-soft); text-shadow:0 0 12px rgba(255,47,82,.6)}
 
-footer{
-  border-top:1px solid var(--line); padding:34px 0 44px; text-align:center;
-  color:var(--dim); font-size:.8rem;
-}
-footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin-bottom:10px; letter-spacing:.08em}
+footer{padding:36px 0 48px; color:var(--dim); font-size:.88rem; border-top:1px solid var(--line)}
+footer p{margin:0}
 
-/* ---------- small utilities (replace former inline styles) ---------- */
-.mt-s{margin-top:14px}
-.mt-m{margin-top:18px}
-.mt-l{margin-top:20px}
-
-/* ---------- reveal ---------- */
-/* Scoped to .js: without a script nothing would ever add .in, and every
-   section below the hero used to stay invisible. */
-.js .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
-.js .reveal.in{opacity:1; transform:none}
-
-@media (max-width:760px){
-  /* Two per row rather than five squeezed ones. */
-  .cta{grid-template-columns:repeat(2,minmax(0,1fr)); max-width:none}
-}
-
+/* ---------- phones ---------- */
 @media (max-width:640px){
-  section{padding:60px 0}
-  .field{border-right:none}
-  /* Drop the wordmark and keep the links on a single scrollable row, so the
-     sticky bar stays one line tall instead of eating a third of the screen. */
+  :root{--gutter:18px; --nav-h:50px}
   .brand{display:none}
-  .nav-in{padding:10px 16px}
-  .nav-links{
-    width:100%; gap:16px; flex-wrap:nowrap;
-    overflow-x:auto; scrollbar-width:none;
-  }
-  .nav-links::-webkit-scrollbar{display:none}
-  .nav-links a{font-size:.72rem; letter-spacing:.08em; white-space:nowrap}
+  .nav-in{justify-content:center}
+  .nav-links{width:100%; justify-content:space-between; gap:8px}
+  .nav-links a{font-size:.875rem; padding:14px 0 12px}
+  /* Size to content: on a phone the sign should not cost a whole screen
+     before the first line of the CV. */
+  .hero{min-height:0; padding:56px 0 96px}
+  .hero h1{margin-bottom:18px}
+  .hero-note{font-size:1rem; margin-bottom:28px}
+  .actions .btn{flex:1 1 140px}
+  .sec{padding:52px 0}
+  .sec h2{margin-bottom:22px}
+  .log{padding-left:24px}
+  .entry::before{left:-24px}
+  .entry-head{flex-direction:column}
+  .entry{padding-bottom:36px}
+  .tag-row{display:block}
+  .tag-row > span{display:block; margin-bottom:6px}
 }
 
-/* Pseudo-elements included: the grid drift and the timeline pulse both live on
-   ::before, and `*` alone does not match them, so they kept animating. */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none !important; transition:none !important}
   html{scroll-behavior:auto}
-  .js .reveal{opacity:1; transform:none}
 }
 
 /* ---------- print ---------- */
-/* Recruiters print CV sites. Neon on black wastes a cartridge and prints as
-   mud, so paper gets ink on white with the structure intact. */
+/* Recruiters print CV sites: paper gets ink on white with the structure intact. */
 @media print{
   @page{margin:16mm}
   body{background:#fff; color:#111; font-size:10.5pt; line-height:1.45}
-  .scanlines,.vignette,nav,.horizon,.sun,.cta,.skip,.legend{display:none !important}
-  .hero{min-height:0; padding:0 0 12pt}
-  section{padding:14pt 0}
+  nav,.horizon,.sun,.hero::after,.actions,.skip,.key{display:none !important}
+  .hero{min-height:0; padding:0 0 10pt}
+  .sec{padding:12pt 0; border-color:#ccc}
+  .sec .wrap{display:block}
+  .sec h2{position:static; margin-bottom:8pt}
   .wrap{max-width:none; padding:0}
-  .js .reveal{opacity:1; transform:none}
-  .neon-red,.neon-cyan,.stat b,.card h3,.entry h3{color:#111 !important; text-shadow:none !important}
-  .eyebrow,.sec-num,.kicker,.entry li::marker{color:#b0102a}
-  .tagline,.entry .when,.row .when{color:#0a6c7a}
-  .lede,.hero-note,.entry p,.entry ul,.entry .role,.row .sub,.scope,.field dd,.stat span,.field dt,footer{color:#333}
-  .dossier,.card,.stat,.contact-card{background:none; box-shadow:none; border-color:#bbb; break-inside:avoid}
-  .entry{break-inside:avoid}
-  .sec-head,.sec-rule{break-after:avoid}
-  .tag{background:none !important; box-shadow:none; color:#333 !important; border-color:#999 !important}
-  .sec-rule{background:#b0102a; box-shadow:none; margin:8pt 0 14pt}
-  .flicker,.entry.active::before{animation:none}
-  .contact-card a::after{content:" (" attr(href) ")"; color:#555; font-size:.8em}
+  .neon-red,.sec h2,h3,.role-line{color:#111 !important; text-shadow:none !important}
+  .flicker{animation:none}
+  .when{color:#0a6c7a}
+  .role,.entry li::marker{color:#b0102a}
+  .prose,.hero-note,.entry ul,.scope,.rows .sub,.facts,.contact span,footer{color:#333}
+  .tag{background:none !important; color:#333 !important; border-color:#999 !important}
+  .entry,.rows li{break-inside:avoid}
+  .sec h2,h3{break-after:avoid}
+  .contact a{color:#111}
+  .contact b{color:#0a6c7a}
 }
 </style>
 </head>
 <body>
 
 <a class="skip" href="#content">Skip to content</a>
-<div class="scanlines" aria-hidden="true"></div>
-<div class="vignette" aria-hidden="true"></div>
 
 <nav aria-label="Sections">
   <div class="nav-in">
-    <span class="brand display neon-red">Adrian Lorente</span>
-    <div class="nav-links">
-      <a href="#background">Background</a>
-      <a href="#arsenal">Arsenal</a>
-      <a href="#log">Log</a>
-      <a href="#credentials">Credentials</a>
-      <a href="#contact">Contact</a>
-    </div>
+    <a class="brand" href="#top">Adrian Lorente</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
   </div>
 </nav>
 
-<!-- ================= HERO ================= -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="horizon" aria-hidden="true"></div>
   <div class="sun" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="eyebrow mono">Madrid · Spain — signal active</p>
-    <h1 class="display neon-red flicker">Adrian<br>Lorente</h1>
-    <p class="tagline mono">IAM Engineer — Identity Governance &amp; Privileged Access</p>
+    <h1 class="neon-red flicker">Adrian<br>Lorente</h1>
+    <p class="role-line">Identity and access management engineer, based in Madrid.</p>
     <p class="hero-note">
       I build and run the systems that decide who gets in, what they can touch,
       and who is watching. Eight years of it, mostly on SailPoint, increasingly
       on the privileged side of the house.
     </p>
-
-    <div class="stats">
-      <div class="stat"><b>8+</b><span>Years in IAM</span></div>
-      <div class="stat"><b>15+</b><span>Technologies in the toolkit</span></div>
-      <div class="stat"><b>5</b><span>Sectors delivered in</span></div>
-      <div class="stat"><b>3+</b><span>Years as soft-skills trainer</span></div>
-    </div>
-
-    <div class="cta">
-      <a class="btn" href="#background">Background</a>
-      <a class="btn" href="#arsenal">Arsenal</a>
-      <a class="btn" href="#log">The Log</a>
-      <a class="btn" href="#credentials">Credentials</a>
-      <a class="btn" href="#contact">Contact</a>
+    <div class="actions">
+      <a class="btn" href="cv-adrian-lorente.pdf" download>Download CV</a>
+      <a class="btn quiet" href="#contact">Get in touch</a>
     </div>
   </div>
 </header>
 
 <main id="content">
-<!-- ================= DOSSIER ================= -->
-<section id="dossier" aria-label="Summary">
-  <div class="wrap reveal">
-    <div class="dossier">
-      <div class="dossier-top">
-        <span class="mono">FILE 001 — SUBJECT: LORENTE, ADRIAN</span>
-        <span class="badge">Status: Active</span>
-      </div>
-      <!-- One list of name/value pairs; each <div> groups a pair (valid HTML),
-           where six one-item lists used to be announced as six separate lists. -->
-      <dl class="dossier-grid">
-        <div class="field"><dt>Designation</dt><dd>Senior Consultant — IAM, iC Consult</dd></div>
-        <div class="field"><dt>Base of operations</dt><dd>Madrid, Spain</dd></div>
-        <div class="field"><dt>Primary discipline</dt><dd>Identity Governance &amp; Administration</dd></div>
-        <div class="field"><dt>Secondary discipline</dt><dd>Privileged Access Management</dd></div>
-        <div class="field"><dt>Languages</dt><dd>Spanish (native) · English (C1) · French (A2&ndash;B1)</dd></div>
-        <div class="field"><dt>Known for</dt><dd>The tech go-to — training, untangling hard problems, and making sure ideas travel</dd></div>
+
+<section class="sec" id="about">
+  <div class="wrap">
+    <!-- Old anchor names kept on the headings so earlier shared links still land. -->
+    <h2 id="background">About</h2>
+    <div class="prose">
+      <p>
+        I started out fixing machines and networks in a museum basement, which is
+        a more literal beginning than most IAM careers get. Consulting came next,
+        at SIA and then KPMG, where I learned the trade on SailPoint by delivering for
+        banks and energy companies that do not enjoy surprises.
+      </p>
+      <p>
+        The four years at Holcim's EMEA Digital Center are the core of it. I was the
+        IdentityIQ technical reference for a platform covering more than 50,000
+        identities across over 40 countries: joiner-mover-leaver, segregation of
+        duties, the Red Hat SSO estate, the One Identity Safeguard privileged
+        access integration, and the CI/CD pipelines holding all of it together.
+      </p>
+      <p>
+        These days I am a Senior Consultant at iC Consult and the SailPoint technical
+        reference for the Spanish profit centre. Same job, wider blast radius.
+      </p>
+      <p>
+        The part I enjoy most is not the platform, it is the handover. I am a certified
+        soft-skills trainer, and I have spent most of my career being the person who
+        gets juniors from "what is an aggregation?" to solving complex tickets on
+        their own. Six months is my current record.
+      </p>
+      <ul class="tags">
+        <li class="tag soft">Automates the boring parts</li>
+        <li class="tag soft">Documents the scary parts</li>
+        <li class="tag soft">Trains the next person</li>
+      </ul>
+
+      <h3 class="sub-h">Outside work</h3>
+      <p>
+        Certified soft-skills trainer through the Youth Trainers Academy (Train the Trainer,
+        2022) and the Leadership Summer School (2021).
+      </p>
+      <p>
+        Four years inside BEST, the Board of European Students of Technology: Regional Adviser
+        to the European network (2021&ndash;22) after a term as Vice President for External
+        Services at BEST Madrid UPM (2020&ndash;21), plus organising international courses and
+        regional meetings along the way.
+      </p>
+      <p>
+        Before that, board member and founder of the Hardware SIG at the ACM UPM student
+        chapter, and a volunteer at COY15 / COP25 in Madrid.
+      </p>
+      <ul class="tags">
+        <li class="tag soft">Training &amp; mentoring</li>
+        <li class="tag soft">Facilitation</li>
+        <li class="tag soft">Public speaking</li>
+        <li class="tag soft">Collaborative work</li>
+        <li class="tag soft">Stakeholder management</li>
+        <li class="tag soft">Cross-cultural teams</li>
+        <li class="tag soft">Leadership</li>
+        <li class="tag soft">Knowledge transfer</li>
+        <li class="tag soft">Non-formal education</li>
+        <li class="tag soft">Event organising</li>
+      </ul>
+
+      <dl class="facts">
+        <dt>Languages:</dt>
+        <dd>Spanish (native), English (C1), French (A2&ndash;B1).</dd>
       </dl>
     </div>
   </div>
 </section>
 
-<!-- ================= BACKGROUND ================= -->
-<section id="background">
-  <div class="wrap reveal">
-    <div class="sec-head">
-      <span class="sec-num mono">01</span>
-      <h2 class="sec-title display neon-cyan">Background</h2>
-    </div>
-    <div class="sec-rule"></div>
-
-    <div class="grid two">
-      <div>
-        <p class="lede">
-          I started out fixing machines and networks in a museum basement, which is
-          a more literal beginning than most IAM careers get. Consulting came next —
-          SIA, then KPMG — where I learned the trade on SailPoint by delivering for
-          banks and energy companies that do not enjoy surprises.
-        </p>
-        <p class="lede">
-          The four years at Holcim's EMEA Digital Center are the core of it. I was the
-          IdentityIQ technical reference for a platform covering more than 50,000
-          identities across over 40 countries: joiner-mover-leaver, segregation of
-          duties, the Red Hat SSO estate, the One Identity Safeguard privileged
-          access integration, and the CI/CD pipelines holding all of it together.
-        </p>
-      </div>
-      <div>
-        <p class="lede">
-          These days I am a Senior Consultant at iC Consult and the SailPoint technical
-          reference for the Spanish profit centre. Same job, wider blast radius.
-        </p>
-        <p class="lede">
-          The part I enjoy most is not the platform, it is the handover. I am a certified
-          soft-skills trainer, and I have spent most of my career being the person who
-          gets juniors from "what is an aggregation?" to solving complex tickets on
-          their own. Six months is my current record.
-        </p>
-        <div class="tags mt-l">
-          <span class="tag soft">Automates the boring parts</span>
-          <span class="tag soft">Documents the scary parts</span>
-          <span class="tag soft">Trains the next person</span>
+<section class="sec" id="skills">
+  <div class="wrap">
+    <h2 id="arsenal">Skills</h2>
+    <div>
+      <ul class="key" aria-label="Tag colour key">
+        <li><i class="k-hot"></i>Platforms I run</li>
+        <li><i class="k-cool"></i>Engineering and cloud</li>
+        <li><i class="k-plain"></i>Standards and processes</li>
+      </ul>
+      <dl class="skills">
+        <div>
+          <dt>Identity governance</dt>
+          <dd><ul class="tags">
+            <li class="tag hot">SailPoint IdentityIQ</li>
+            <li class="tag hot">SailPoint Identity Security Cloud</li>
+            <li class="tag">Joiner-Mover-Leaver</li>
+            <li class="tag">RBAC</li>
+            <li class="tag">Segregation of Duties</li>
+            <li class="tag">Access Certification</li>
+          </ul></dd>
         </div>
-      </div>
+        <div>
+          <dt>Privileged access</dt>
+          <dd><ul class="tags">
+            <li class="tag hot">One Identity Safeguard</li>
+            <li class="tag hot">BeyondTrust Password Safe</li>
+            <li class="tag hot">Silverfort</li>
+            <li class="tag hot">Adaptive Shield</li>
+            <li class="tag">Password Vault</li>
+            <li class="tag">Privileged Access</li>
+            <li class="tag">SSPM</li>
+          </ul></dd>
+        </div>
+        <div>
+          <dt>Access management</dt>
+          <dd><ul class="tags">
+            <li class="tag hot">Red Hat SSO / Keycloak</li>
+            <li class="tag">SAML</li>
+            <li class="tag">OAuth 2.0 / OIDC</li>
+            <li class="tag">Single Sign-On</li>
+            <li class="tag">MFA</li>
+            <li class="tag">Active Directory</li>
+          </ul></dd>
+        </div>
+        <div>
+          <dt>Engineering and cloud</dt>
+          <dd><ul class="tags">
+            <li class="tag cool">Java</li>
+            <li class="tag cool">Python</li>
+            <li class="tag cool">PowerShell</li>
+            <li class="tag cool">REST &amp; SOAP</li>
+            <li class="tag cool">AWS (EC2, RDS)</li>
+            <li class="tag cool">ROSA / OpenShift</li>
+            <li class="tag cool">Ansible</li>
+            <li class="tag cool">Jenkins</li>
+            <li class="tag cool">GitHub</li>
+          </ul></dd>
+        </div>
+      </dl>
     </div>
   </div>
 </section>
 
-<!-- ================= ARSENAL ================= -->
-<section id="arsenal">
-  <div class="wrap reveal">
-    <div class="sec-head">
-      <span class="sec-num mono">02</span>
-      <h2 class="sec-title display neon-cyan">Arsenal</h2>
-    </div>
-    <div class="sec-rule"></div>
+<section class="sec" id="experience">
+  <div class="wrap">
+    <h2 id="log">Experience</h2>
+    <ol class="log">
 
-    <div class="legend" role="group" aria-label="Tag colour key">
-      <span><i class="k-hot"></i> Platforms I run</span>
-      <span><i class="k-cool"></i> Engineering &amp; cloud</span>
-      <span><i class="k-plain"></i> Standards &amp; processes</span>
-    </div>
-
-    <div class="grid two">
-      <article class="card">
-        <div class="kicker mono">Primary weapon</div>
-        <h3>Identity Governance</h3>
-        <div class="tags">
-          <span class="tag hot">SailPoint IdentityIQ</span>
-          <span class="tag hot">SailPoint Identity Security Cloud</span>
-          <span class="tag">Joiner-Mover-Leaver</span>
-          <span class="tag">RBAC</span>
-          <span class="tag">Segregation of Duties</span>
-          <span class="tag">Access Certification</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="kicker mono">Sidearm</div>
-        <h3>Privileged Access</h3>
-        <div class="tags">
-          <span class="tag hot">One Identity Safeguard</span>
-          <span class="tag hot">BeyondTrust Password Safe</span>
-          <span class="tag hot">Silverfort</span>
-          <span class="tag hot">Adaptive Shield</span>
-          <span class="tag">Password Vault</span>
-          <span class="tag">Privileged Access</span>
-          <span class="tag">SSPM</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="kicker mono">The front door</div>
-        <h3>Access Management</h3>
-        <div class="tags">
-          <span class="tag hot">Red Hat SSO / Keycloak</span>
-          <span class="tag">SAML</span>
-          <span class="tag">OAuth 2.0 / OIDC</span>
-          <span class="tag">Single Sign-On</span>
-          <span class="tag">MFA</span>
-          <span class="tag">Active Directory</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="kicker mono">Workshop</div>
-        <h3>Engineering &amp; Cloud</h3>
-        <div class="tags">
-          <span class="tag cool">Java</span>
-          <span class="tag cool">Python</span>
-          <span class="tag cool">PowerShell</span>
-          <span class="tag cool">REST &amp; SOAP</span>
-          <span class="tag cool">AWS (EC2, RDS)</span>
-          <span class="tag cool">ROSA / OpenShift</span>
-          <span class="tag cool">Ansible</span>
-          <span class="tag cool">Jenkins</span>
-          <span class="tag cool">GitHub</span>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ================= LOG ================= -->
-<section id="log">
-  <div class="wrap reveal">
-    <div class="sec-head">
-      <span class="sec-num mono">03</span>
-      <h2 class="sec-title display neon-cyan">The Log</h2>
-    </div>
-    <div class="sec-rule"></div>
-
-    <div class="log">
-
-      <article class="entry active">
+      <li class="entry current">
         <div class="entry-head">
           <h3>iC Consult</h3>
-          <span class="when">Feb 2025 — Present</span>
+          <span class="when">Feb 2025&ndash;present</span>
         </div>
-        <div class="role">Senior Consultant — Identity &amp; Access Management · Madrid</div>
+        <p class="role">Senior Consultant, Identity &amp; Access Management, Madrid</p>
         <ul>
-          <li>Technical reference for SailPoint across the Spanish profit centre — technical
+          <li>Technical reference for SailPoint across the Spanish profit centre: technical
               assessments for new opportunities, and keeping SailPoint knowledge moving
               through the team rather than sitting in one head.</li>
           <li>IdentityIQ technical reference for a German banking group in the automotive
               sector: complex technical requirements and critical incident resolution.</li>
           <li>Ran the client's <strong>IdentityIQ upgrade from 8.4p3 to 8.5p1</strong> end to
-              end — assessment, design of the operation, and execution.</li>
+              end: assessment, design of the operation, and execution.</li>
           <li>Mentoring junior consultants to the point of solving complex tasks within six
               months of joining.</li>
         </ul>
-        <div class="tags">
-          <span class="taglabel">Sectors</span>
-          <span class="tag sector">Automotive</span>
-          <span class="tag sector">Banking</span>
+        <div class="tag-row">
+          <span>Sectors</span>
+          <ul class="tags">
+            <li class="tag sector">Automotive</li>
+            <li class="tag sector">Banking</li>
+          </ul>
         </div>
-      </article>
+      </li>
 
-      <article class="entry">
+      <li class="entry">
         <div class="entry-head">
           <h3>Holcim EMEA Digital Center</h3>
-          <span class="when">Jun 2021 — Feb 2025</span>
+          <span class="when">Jun 2021&ndash;Feb 2025</span>
         </div>
-        <div class="role">User Life Cycle Expert · Madrid</div>
-        <p class="scope">SCOPE // 50,000+ identities · 40+ countries across Europe, Africa and the Middle East · 60+ integrated applications</p>
+        <p class="role">User Life Cycle Expert, Madrid</p>
+        <p class="scope">50,000+ identities in 40+ countries across Europe, Africa and the Middle East, with 60+ integrated applications.</p>
         <ul>
-          <li>IdentityIQ technical reference for the L3 team — escalated and technically
+          <li>IdentityIQ technical reference for the L3 team: escalated and technically
               complex incidents across the estate, plus tutoring the L2 team, onboarding
               new L3 joiners and running technical training for stakeholders.</li>
           <li>Owned the privileged access estate: <strong>One Identity Safeguard</strong>
@@ -746,36 +605,38 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
               Segregation of Duties and critical access request detection that put the
               Internal Control team into the approval process.</li>
           <li>Administered <strong>Red Hat SSO (Keycloak)</strong> as the group access
-              management layer, and owned the CI/CD pipelines for both platforms — GitHub,
-              Jenkins and Ansible into AWS EC2/RDS and into ROSA — delivering every upgrade
+              management layer, and owned the CI/CD pipelines for both platforms (GitHub,
+              Jenkins and Ansible into AWS EC2/RDS and into ROSA), delivering every upgrade
               and patch cycle across the full stack under ownership.</li>
         </ul>
-        <div class="tags">
-          <span class="taglabel">Stack</span>
-          <span class="tag hot">SailPoint IdentityIQ</span>
-          <span class="tag hot">One Identity Safeguard</span>
-          <span class="tag hot">Red Hat SSO</span>
-          <span class="tag hot">Silverfort</span>
-          <span class="tag hot">Adaptive Shield</span>
-          <span class="tag cool">AWS</span>
-          <span class="tag cool">ROSA</span>
-          <span class="tag cool">Ansible</span>
-          <span class="tag cool">Jenkins</span>
+        <div class="tag-row">
+          <span>Stack</span>
+          <ul class="tags">
+            <li class="tag hot">SailPoint IdentityIQ</li>
+            <li class="tag hot">One Identity Safeguard</li>
+            <li class="tag hot">Red Hat SSO</li>
+            <li class="tag hot">Silverfort</li>
+            <li class="tag hot">Adaptive Shield</li>
+            <li class="tag cool">AWS</li>
+            <li class="tag cool">ROSA</li>
+            <li class="tag cool">Ansible</li>
+            <li class="tag cool">Jenkins</li>
+          </ul>
         </div>
-        <!-- The CV lists construction materials as the fifth sector; without
-             this row the hero's "5 sectors" only added up to four on the page. -->
-        <div class="tags mt-s">
-          <span class="taglabel">Sectors</span>
-          <span class="tag sector">Construction Materials</span>
+        <div class="tag-row">
+          <span>Sectors</span>
+          <ul class="tags">
+            <li class="tag sector">Construction Materials</li>
+          </ul>
         </div>
-      </article>
+      </li>
 
-      <article class="entry">
+      <li class="entry">
         <div class="entry-head">
           <h3>KPMG Spain</h3>
-          <span class="when">Apr 2020 — Jun 2021</span>
+          <span class="when">Apr 2020&ndash;Jun 2021</span>
         </div>
-        <div class="role">Cyber Security Consultant — Identity &amp; Access Management · Madrid</div>
+        <p class="role">Cyber Security Consultant, Identity &amp; Access Management, Madrid</p>
         <ul>
           <li>One of the practice's SailPoint IdentityIQ people, on IAM projects for
               Bankinter (ES), Grupo Salinas (MX) and Puig (ES).</li>
@@ -783,164 +644,109 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
               IdentityIQ designs, from workflow down to connector level.</li>
           <li>Built bespoke client demonstrations supporting pre-sales.</li>
         </ul>
-        <div class="tags">
-          <span class="taglabel">Sectors</span>
-          <span class="tag sector">Banking</span>
-          <span class="tag sector">Consumer Goods</span>
+        <div class="tag-row">
+          <span>Sectors</span>
+          <ul class="tags">
+            <li class="tag sector">Banking</li>
+            <li class="tag sector">Consumer Goods</li>
+          </ul>
         </div>
-      </article>
+      </li>
 
-      <article class="entry">
+      <li class="entry">
         <div class="entry-head">
           <h3>SIA Group</h3>
-          <span class="when">Mar 2018 — Apr 2020</span>
+          <span class="when">Mar 2018&ndash;Apr 2020</span>
         </div>
-        <div class="role">Cyber Security Consultant — Identity &amp; Access Management · Alcorcón</div>
+        <p class="role">Cyber Security Consultant, Identity &amp; Access Management, Alcorcón</p>
         <ul>
           <li>SailPoint design and implementation to client specification for
               Santander Bank (ES) and CEPSA (ES).</li>
           <li>Built the team's training environment and the technical documentation new
-              joiners were onboarded with — the first time I noticed I liked that part.</li>
+              joiners were onboarded with. The first time I noticed I liked that part.</li>
         </ul>
-        <div class="tags">
-          <span class="taglabel">Sectors</span>
-          <span class="tag sector">Banking</span>
-          <span class="tag sector">Energy</span>
+        <div class="tag-row">
+          <span>Sectors</span>
+          <ul class="tags">
+            <li class="tag sector">Banking</li>
+            <li class="tag sector">Energy</li>
+          </ul>
         </div>
-      </article>
+      </li>
 
-      <article class="entry">
+      <li class="entry">
         <div class="entry-head">
           <h3>Informática Joisan</h3>
-          <span class="when">Dec 2017 — Feb 2018</span>
+          <span class="when">Dec 2017&ndash;Feb 2018</span>
         </div>
-        <div class="role">Systems Administrator &amp; Helpdesk · Museo Arqueológico Nacional, Madrid</div>
+        <p class="role">Systems Administrator &amp; Helpdesk, Museo Arqueológico Nacional, Madrid</p>
         <ul>
           <li>Systems, data centre and networks for the national archaeological museum,
               plus end-user support. Where it all started.</li>
         </ul>
-      </article>
+      </li>
 
-    </div>
+    </ol>
   </div>
 </section>
 
-<!-- ================= CREDENTIALS ================= -->
-<section id="credentials">
-  <div class="wrap reveal">
-    <div class="sec-head">
-      <span class="sec-num mono">04</span>
-      <h2 class="sec-title display neon-cyan">Credentials</h2>
-    </div>
-    <div class="sec-rule"></div>
-
-    <div class="grid two">
-      <article class="card">
-        <div class="kicker mono">Certifications</div>
-        <h3>Vendor</h3>
-        <div class="rows mt-s">
-          <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityIQ Accelerator Pack</div></div></div>
-          <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityNow Implementation &amp; Administration: Essentials v19b</div></div></div>
-          <div class="row"><div><strong>SailPoint</strong><div class="sub">File Access Manager Introduction v8.0</div></div></div>
-          <div class="row"><div><strong>BeyondTrust</strong><div class="sub">Password Safe — BCIE Curriculum</div></div></div>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="kicker mono">Education</div>
-        <h3>Academic</h3>
-        <div class="rows mt-s">
-          <div class="row">
-            <div><strong>BSc Computer Engineering — Information Technology</strong>
-              <div class="sub">UNED · EQF Level 6, in progress</div></div>
-            <span class="when">2022 — 2028</span>
-          </div>
-          <div class="row">
-            <div><strong>HND Network Systems Administration</strong>
-              <div class="sub">I.E.S. Luis Vives · EQF Level 5</div></div>
-            <span class="when">2016 — 2018</span>
-          </div>
-          <div class="row">
-            <div><strong>Cybersecurity — "Luke, I'm Your Hacker"</strong>
-              <div class="sub">Universidad Politécnica de Madrid · 100/100</div></div>
+<section class="sec" id="education">
+  <div class="wrap">
+    <h2 id="credentials">Education</h2>
+    <div class="columns">
+      <div>
+        <h3>Certifications</h3>
+        <ul class="rows">
+          <li><strong>SailPoint IdentityIQ Accelerator Pack</strong></li>
+          <li><strong>SailPoint IdentityNow Implementation &amp; Administration</strong><span class="sub">Essentials v19b</span></li>
+          <li><strong>SailPoint File Access Manager</strong><span class="sub">Introduction v8.0</span></li>
+          <li><strong>BeyondTrust Password Safe</strong><span class="sub">BCIE curriculum</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Studies</h3>
+        <ul class="rows">
+          <li>
+            <strong>BSc Computer Engineering, Information Technology</strong>
+            <span class="sub">UNED, EQF level 6, in progress</span>
+            <span class="when">2022&ndash;2028</span>
+          </li>
+          <li>
+            <strong>HND Network Systems Administration</strong>
+            <span class="sub">I.E.S. Luis Vives, EQF level 5</span>
+            <span class="when">2016&ndash;2018</span>
+          </li>
+          <li>
+            <strong>Cybersecurity: "Luke, I'm Your Hacker"</strong>
+            <span class="sub">Universidad Politécnica de Madrid, 100/100</span>
             <span class="when">2018</span>
-          </div>
-          <div class="row">
-            <div><strong>Internet of Things</strong>
-              <div class="sub">Ural Federal University · 85/100</div></div>
+          </li>
+          <li>
+            <strong>Internet of Things</strong>
+            <span class="sub">Ural Federal University, 85/100</span>
             <span class="when">2019</span>
-          </div>
-        </div>
-      </article>
-    </div>
-
-    <div class="card mt-m">
-      <div class="kicker mono">Off the clock</div>
-      <h3>Trainer, organiser, volunteer</h3>
-      <p class="lede mt-s">
-        Certified soft-skills trainer through the Youth Trainers Academy (Train the Trainer,
-        2022) and the Leadership Summer School (2021).
-      </p>
-      <p class="lede">
-        Four years inside BEST — Board of European Students of Technology: Regional Adviser
-        to the European network (2021&ndash;22) after a term as Vice President for External
-        Services at BEST Madrid UPM (2020&ndash;21), plus organising international courses and
-        regional meetings along the way.
-      </p>
-      <p class="lede">
-        Before that, board member and founder of the Hardware SIG at the ACM UPM student
-        chapter, and a volunteer at COY15 / COP25 in Madrid.
-      </p>
-      <div class="tags mt-m">
-        <span class="taglabel">Soft skills</span>
-        <span class="tag soft">Training &amp; mentoring</span>
-        <span class="tag soft">Facilitation</span>
-        <span class="tag soft">Public speaking</span>
-        <span class="tag soft">Collaborative work</span>
-        <span class="tag soft">Stakeholder management</span>
-        <span class="tag soft">Cross-cultural teams</span>
-        <span class="tag soft">Leadership</span>
-        <span class="tag soft">Knowledge transfer</span>
-        <span class="tag soft">Non-formal education</span>
-        <span class="tag soft">Event organising</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= CONTACT ================= -->
-<section id="contact">
-  <div class="wrap reveal">
-    <div class="sec-head">
-      <span class="sec-num mono">05</span>
-      <h2 class="sec-title display neon-cyan">Open a channel</h2>
-    </div>
-    <div class="sec-rule"></div>
-
-    <p class="lede">
-      Hiring for something between IGA and PAM? Stuck on an IdentityIQ upgrade?
-      Or just want to argue about whether birthright access is ever acceptable?
-      Any of those work.
-    </p>
-
-    <div class="contact-grid">
-      <div class="contact-card">
-        <span class="lbl">Mail</span>
-        <a href="mailto:adrianlc96@gmail.com">adrianlc96@gmail.com</a>
-      </div>
-      <div class="contact-card">
-        <span class="lbl">LinkedIn</span>
-        <a href="https://www.linkedin.com/in/adrian-lorente-iam" target="_blank" rel="noopener noreferrer">adrian-lorente-iam</a>
-      </div>
-      <div class="contact-card">
-        <span class="lbl">GitHub</span>
-        <a href="https://github.com/MisterErre" target="_blank" rel="noopener noreferrer">MisterErre</a>
-      </div>
-      <div class="contact-card">
-        <span class="lbl">Curriculum</span>
-        <!-- `download` saves the file straight to disk without navigating away. -->
-        <a href="cv-adrian-lorente.pdf" download>Download PDF</a>
-      </div>
+<section class="sec" id="contact">
+  <div class="wrap">
+    <h2>Contact</h2>
+    <div>
+      <p class="prose">
+        Hiring for something between IGA and PAM? Stuck on an IdentityIQ upgrade?
+        Or just want to argue about whether birthright access is ever acceptable?
+        Any of those work.
+      </p>
+      <ul class="contact">
+        <li><a href="mailto:adrianlc96@gmail.com"><span>Email</span><b>adrianlc96@gmail.com</b></a></li>
+        <li><a href="https://www.linkedin.com/in/adrian-lorente-iam" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><b>adrian-lorente-iam</b></a></li>
+        <li><a href="https://github.com/MisterErre" target="_blank" rel="noopener noreferrer"><span>GitHub</span><b>MisterErre</b></a></li>
+        <li><a href="cv-adrian-lorente.pdf" download><span>Full CV</span><b>PDF, 2 pages</b></a></li>
+      </ul>
     </div>
   </div>
 </section>
@@ -948,39 +754,12 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 
 <footer>
   <div class="wrap">
-    <p class="quip">&gt; Access granted. Session logged.</p>
-    <p>&copy; <span id="yr">2026</span> Adrian Lorente · Built with LaTeX, HTML and too much neon.</p>
+    <p>&copy; <span id="yr">2026</span> Adrian Lorente. Built with LaTeX, HTML and too much neon.</p>
   </div>
 </footer>
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
-
-const reveals = document.querySelectorAll('.reveal');
-
-if (!('IntersectionObserver' in window)) {
-  // Very old engine: show everything rather than leave it hidden.
-  reveals.forEach(el => el.classList.add('in'));
-} else {
-  // Hide the sticky nav while the hero's own section buttons are still on screen.
-  const nav = document.querySelector('nav');
-  const cta = document.querySelector('.cta');
-  if (nav && cta) {
-    new IntersectionObserver(([entry]) => {
-      nav.classList.toggle('tucked', entry.isIntersecting);
-    }).observe(cta);
-  }
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-  reveals.forEach(el => io.observe(el));
-}
-
-// Printing straight from the top of the page would skip unrevealed sections.
-addEventListener('beforeprint', () => reveals.forEach(el => el.classList.add('in')));
 </script>
 
 </body>
