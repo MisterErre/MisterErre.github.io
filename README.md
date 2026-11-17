@@ -31,22 +31,38 @@ is worse than one that is slightly out of date.
 
 ## Design notes
 
+**One idea: the neon sign and the paperwork.** The hero is the sign: the glowing
+name, its flicker, the synthwave floor and CRT scanlines. That is the only loud
+thing on the page. Everything below it is a calm CV on a dark page. Keep it that
+way when adding content; most "make it pop" ideas belong in the hero or nowhere.
+
 - Palette and type live in the `:root` block at the top of the `<style>` tag.
   `--red` is the primary neon, `--cyan` the secondary, `--violet` the accent.
-- Fonts: `Bevan` (display), `Share Tech Mono` (labels and data), `Inter` (body,
-  variable weight). They are self-hosted from `fonts/` on purpose: loading them
-  from Google's CDN sends every visitor's IP to Google, which German courts
-  have ruled a GDPR breach without consent. Do not reintroduce the Google
-  Fonts `<link>`. Fresh copies come from the `@fontsource` npm packages.
-- Motion (grid drift, flicker, scroll reveals) is disabled automatically under
-  `prefers-reduced-motion`. The grid floor is `.horizon::before`: the
+  Below the hero, colour only carries meaning: dates (cyan), roles (soft red)
+  and the semantic tag colours below.
+- Fonts: `Bevan` for the name and headings, `Inter` (weight 400; 300 goes
+  spindly as light-on-dark text on phones) for everything you read, and
+  `Share Tech Mono` only for data: dates, tags and contact handles.
+  They are self-hosted from `fonts/` on purpose: loading them from Google's CDN
+  sends every visitor's IP to Google, which German courts have ruled a GDPR
+  breach without consent. Do not reintroduce the Google Fonts `<link>`. Fresh
+  copies come from the `@fontsource` npm packages.
+- Things deliberately **not** on the page, because they read as a generated
+  template: tracked ALL-CAPS labels, numbered section markers (the sections are
+  not a sequence), stat tiles, a card around every block, fade-in on scroll,
+  hover lifts, and role-play copy ("arsenal", "primary weapon", "access
+  granted"). Labels are sentence case.
+- Layout: on wide screens each section name sits in a left column with the
+  content beside it, like a printed CV; under 900px they stack. The phone
+  breakpoint (640px) sizes the hero to its content, keeps the nav on one line
+  and turns contact rows into full-width tap targets (56px).
+- The only motion is in the hero (grid drift, flicker), and it switches off
+  under `prefers-reduced-motion`. The grid floor is `.horizon::before`: the
   perspective camera sits on the horizon (top edge of `.horizon`) and the drift
-  animates `transform`, not `background-position`, so it stays off the main
-  thread.
-- Scroll reveals only hide content when JS is running (`html.js .reveal`), so
-  the page is fully readable with scripts blocked.
-- There is a print stylesheet: printing the page gives an ink-on-white CV, not
-  neon on black.
+  animates `transform`, so it stays off the main thread.
+- The headings keep the old anchor ids (`#background`, `#arsenal`, `#log`,
+  `#credentials`) so links shared before the rename still land.
+- There is a print stylesheet: printing the page gives an ink-on-white CV.
 - If you change the hero, regenerate `og-image.jpg` (any 1200×630 screenshot of
   the hero will do).
 - Company names in the experience timeline are deliberately **not** uppercased —
@@ -61,6 +77,6 @@ is worse than one that is slightly out of date.
   | `.tag.sector` | violet | Industries delivered into |
   | `.tag.soft` | amber | Human skills — warm on purpose, so the one non-technical row does not read as another stack |
 
-  The legend under *Arsenal* documents the first three for the reader. In the
-  timeline each tag row carries a `.taglabel` (`Stack` / `Sectors`) so a row of
+  The colour key under *Skills* documents the first three for the reader. In the
+  timeline each tag row carries a label (`Stack` / `Sectors`) so a row of
   technologies is never confused with a row of industries.
