@@ -5,22 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Adrian Lorente · IAM Engineer</title>
 <meta name="description" content="Adrian Lorente — Identity &amp; Access Management engineer. Identity governance, privileged access and the pipelines behind them.">
-<meta name="theme-color" content="#07060d">
+<meta name="theme-color" content="#0b0916">
+<meta name="color-scheme" content="dark">
+<meta name="author" content="Adrian Lorente">
+<link rel="canonical" href="https://mistererre.github.io/">
 
 <meta property="og:title" content="Adrian Lorente · IAM Engineer">
 <meta property="og:description" content="Identity governance, privileged access, and the pipelines behind them.">
-<meta property="og:type" content="website">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://mistererre.github.io/">
+<meta property="og:image" content="https://mistererre.github.io/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Adrian Lorente, IAM Engineer, set in red neon over a synthwave grid">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (fonts/, SIL OFL). Loading them from Google's CDN
+     hands every visitor's IP to Google, which EU courts have ruled a GDPR
+     breach without consent. Latin subset only; it covers the Spanish accents. -->
+<link rel="preload" href="fonts/bevan-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>&#x1F51B;</text></svg>">
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Adrian Lorente",
+  "jobTitle": "Senior Consultant, Identity & Access Management",
+  "worksFor": {"@type": "Organization", "name": "iC Consult"},
+  "address": {"@type": "PostalAddress", "addressLocality": "Madrid", "addressCountry": "ES"},
+  "url": "https://mistererre.github.io/",
+  "sameAs": [
+    "https://www.linkedin.com/in/adrian-lorente-iam",
+    "https://github.com/MisterErre"
+  ],
+  "knowsAbout": ["Identity Governance and Administration", "Privileged Access Management", "SailPoint IdentityIQ", "Keycloak"]
+}
+</script>
+
+<!-- Marks JS as available before first paint, so scroll reveals only ever
+     hide content when there is a script around to show it again. -->
+<script>document.documentElement.classList.add('js')</script>
+
 <style>
+@font-face{
+  font-family:'Bevan'; font-style:normal; font-weight:400; font-display:swap;
+  src:url(fonts/bevan-latin-400-normal.woff2) format('woff2');
+}
+@font-face{
+  font-family:'Share Tech Mono'; font-style:normal; font-weight:400; font-display:swap;
+  src:url(fonts/share-tech-mono-latin-400-normal.woff2) format('woff2');
+}
+@font-face{
+  font-family:'Inter'; font-style:normal; font-weight:100 900; font-display:swap;
+  src:url(fonts/inter-latin-wght-normal.woff2) format('woff2');
+}
+
 :root{
+  color-scheme:dark;
   --void:#0b0916;
-  --deep:#13102340;
   --panel:#1a1530;
   --line:#3d2f66;
   --red:#ff2f52;
@@ -34,8 +80,9 @@
   --maxw:1080px;
 }
 
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+/* Anchor jumps land below the sticky nav instead of under it. */
+html{scroll-behavior:smooth; scroll-padding-top:64px}
 body{
   margin:0; background:var(--void); color:var(--ink);
   font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -45,14 +92,28 @@ body{
 img{max-width:100%}
 a{color:var(--cyan); text-decoration:none}
 a:hover{color:var(--red-soft)}
+/* One focus ring for everything, in the hover colour, so keyboard users get
+   the same "lit" signal as mouse users. */
+:focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:2px}
+h1,h2,h3{text-wrap:balance}
+p,li{text-wrap:pretty}
+
+.skip{
+  position:absolute; left:12px; top:-60px; z-index:100;
+  padding:10px 16px; background:var(--panel); border:1px solid var(--cyan);
+  font-family:'Share Tech Mono',monospace; letter-spacing:.12em; text-transform:uppercase; font-size:.8rem;
+}
+.skip:focus{top:12px}
 
 /* ---------- atmosphere ---------- */
 .scanlines,.vignette{position:fixed; inset:0; pointer-events:none; z-index:60}
+/* No mix-blend-mode: multiplying pure black is identical to plain alpha, and a
+   full-screen blended layer forces an expensive recomposite on every scroll. */
 .scanlines{
   background:repeating-linear-gradient(to bottom,
     rgba(0,0,0,.16) 0px, rgba(0,0,0,.16) 1px,
     transparent 1px, transparent 3px);
-  opacity:.28; mix-blend-mode:multiply;
+  opacity:.28;
 }
 .vignette{
   background:radial-gradient(ellipse at 50% 40%, transparent 52%, rgba(0,0,0,.5) 100%);
@@ -104,12 +165,17 @@ nav{
   backdrop-filter:blur(12px);
   background:linear-gradient(180deg, rgba(11,9,22,.95), rgba(11,9,22,.75));
   border-bottom:1px solid var(--line);
-  transition:transform .35s ease, opacity .35s ease;
+  transition:transform .35s ease, opacity .35s ease, visibility 0s;
 }
 /* Tucked away while the hero's own section buttons are on screen — two sets of
    the same links at once is noise. Applied by JS, so a no-JS visitor keeps a
-   permanently visible nav. */
-nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
+   permanently visible nav. `visibility` (flipped after the slide finishes)
+   takes the hidden links out of the tab order too; opacity alone left them
+   focusable while invisible. */
+nav.tucked{
+  transform:translateY(-105%); opacity:0; visibility:hidden;
+  transition:transform .35s ease, opacity .35s ease, visibility 0s .35s;
+}
 .nav-in{
   max-width:var(--maxw); margin-inline:auto; padding:12px 22px;
   display:flex; align-items:center; justify-content:space-between; gap:18px;
@@ -125,7 +191,9 @@ nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
 
 /* ---------- hero ---------- */
 .hero{
-  min-height:92vh; display:flex; flex-direction:column; justify-content:center;
+  /* svh: the small viewport, so mobile browser chrome cannot push the CTA row
+     below the fold. vh stays as the fallback for older engines. */
+  min-height:92vh; min-height:92svh; display:flex; flex-direction:column; justify-content:center;
   padding:70px 0 60px; overflow:hidden;
 }
 /* The decorative layers are positioned, so they paint above the static content
@@ -133,21 +201,39 @@ nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
    and be transparent to the pointer. */
 .hero .wrap{position:relative; z-index:3}
 .horizon,.sun{pointer-events:none}
+/* The synthwave floor. The camera (perspective-origin) sits on the horizon,
+   the top edge of this box, and the plane hinges there and tips towards the
+   viewer. The earlier version put the vanishing point on the plane's *bottom*
+   edge, which projected the whole grid onto a single hairline: it never
+   actually rendered. Perspective scales with the box (both 52vh), so the
+   geometry is identical on every screen height. */
 .horizon{
   position:absolute; inset:auto 0 0 0; height:52vh; z-index:0; overflow:hidden;
-  mask-image:linear-gradient(to bottom, transparent, #000 38%);
-  -webkit-mask-image:linear-gradient(to bottom, transparent, #000 38%);
+  perspective:52vh; perspective-origin:50% 0;
+  /* Long, soft fade: the grid sits behind the intro copy and must stay
+     atmosphere, not a ruled sheet the text has to fight. */
+  --fade:linear-gradient(to bottom, transparent, rgba(0,0,0,.35) 40%, #000 92%);
+  mask-image:var(--fade); -webkit-mask-image:var(--fade);
 }
 .horizon::before{
-  content:''; position:absolute; inset:-40% -60% -20% -60%;
+  /* Starts two rows above the horizon so the drift never exposes an edge. */
+  content:''; position:absolute; left:-50%; right:-50%; top:-124px; height:calc(100% + 124px);
   background:
     repeating-linear-gradient(90deg, rgba(196,107,245,.72) 0 1px, transparent 1px 84px),
     repeating-linear-gradient(0deg, rgba(255,47,82,.62) 0 1px, transparent 1px 62px);
-  transform:perspective(320px) rotateX(72deg);
-  transform-origin:50% 100%;
+  background-position:50% 0, 0 0;
+  transform-origin:50% 124px;
+  transform:rotateX(60deg);
   animation:drift 9s linear infinite;
+  will-change:transform;
 }
-@keyframes drift{from{background-position:0 0,0 0} to{background-position:0 0,0 62px}}
+/* Slides the floor towards the viewer by exactly one row (62px) along its own
+   surface, so the loop is seamless. Animating transform stays on the
+   compositor; animating background-position repainted every frame. */
+@keyframes drift{
+  from{transform:rotateX(60deg) translateY(0)}
+  to  {transform:rotateX(60deg) translateY(62px)}
+}
 .sun{
   position:absolute; left:50%; bottom:34vh; translate:-50% 0;
   width:min(620px,90vw); aspect-ratio:1; border-radius:50%; z-index:0;
@@ -182,7 +268,7 @@ nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
 .stat:hover b{text-shadow:0 0 22px rgba(255,47,82,.95)}
 .stat b{display:block; font-family:'Bevan',serif; font-size:1.55rem; color:#fff;
   text-shadow:0 0 16px rgba(255,30,66,.75); line-height:1.1}
-.stat span{font-size:.68rem; letter-spacing:.15em; color:var(--dim); text-transform:uppercase}
+.stat span{display:block; margin-top:4px; font-size:.68rem; line-height:1.4; letter-spacing:.15em; color:var(--dim); text-transform:uppercase}
 
 /* Grid rather than flex: equal columns give the five buttons an identical
    width regardless of how long each label is. */
@@ -232,7 +318,8 @@ nav.tucked{transform:translateY(-105%); opacity:0; pointer-events:none}
   padding:3px 10px; border:1px solid var(--cyan); color:var(--cyan);
   border-radius:2px; text-transform:uppercase;
 }
-.dossier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0}
+/* 280px min: the six fields fall as 3×2 or 2×3 rather than a ragged 4+2. */
+.dossier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:0; margin:0}
 .field{padding:16px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
 .field:last-child{border-right:none}
 .field dt{font-size:.66rem; letter-spacing:.2em; color:var(--dim); text-transform:uppercase; margin-bottom:6px}
@@ -347,9 +434,16 @@ footer{
 }
 footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin-bottom:10px; letter-spacing:.08em}
 
+/* ---------- small utilities (replace former inline styles) ---------- */
+.mt-s{margin-top:14px}
+.mt-m{margin-top:18px}
+.mt-l{margin-top:20px}
+
 /* ---------- reveal ---------- */
-.reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
-.reveal.in{opacity:1; transform:none}
+/* Scoped to .js: without a script nothing would ever add .in, and every
+   section below the hero used to stay invisible. */
+.js .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease}
+.js .reveal.in{opacity:1; transform:none}
 
 @media (max-width:760px){
   /* Two per row rather than five squeezed ones. */
@@ -371,18 +465,46 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
   .nav-links a{font-size:.72rem; letter-spacing:.08em; white-space:nowrap}
 }
 
+/* Pseudo-elements included: the grid drift and the timeline pulse both live on
+   ::before, and `*` alone does not match them, so they kept animating. */
 @media (prefers-reduced-motion:reduce){
-  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
-  .reveal{opacity:1; transform:none}
+  *,*::before,*::after{animation:none !important; transition:none !important}
+  html{scroll-behavior:auto}
+  .js .reveal{opacity:1; transform:none}
+}
+
+/* ---------- print ---------- */
+/* Recruiters print CV sites. Neon on black wastes a cartridge and prints as
+   mud, so paper gets ink on white with the structure intact. */
+@media print{
+  @page{margin:16mm}
+  body{background:#fff; color:#111; font-size:10.5pt; line-height:1.45}
+  .scanlines,.vignette,nav,.horizon,.sun,.cta,.skip,.legend{display:none !important}
+  .hero{min-height:0; padding:0 0 12pt}
+  section{padding:14pt 0}
+  .wrap{max-width:none; padding:0}
+  .js .reveal{opacity:1; transform:none}
+  .neon-red,.neon-cyan,.stat b,.card h3,.entry h3{color:#111 !important; text-shadow:none !important}
+  .eyebrow,.sec-num,.kicker,.entry li::marker{color:#b0102a}
+  .tagline,.entry .when,.row .when{color:#0a6c7a}
+  .lede,.hero-note,.entry p,.entry ul,.entry .role,.row .sub,.scope,.field dd,.stat span,.field dt,footer{color:#333}
+  .dossier,.card,.stat,.contact-card{background:none; box-shadow:none; border-color:#bbb; break-inside:avoid}
+  .entry{break-inside:avoid}
+  .sec-head,.sec-rule{break-after:avoid}
+  .tag{background:none !important; box-shadow:none; color:#333 !important; border-color:#999 !important}
+  .sec-rule{background:#b0102a; box-shadow:none; margin:8pt 0 14pt}
+  .flicker,.entry.active::before{animation:none}
+  .contact-card a::after{content:" (" attr(href) ")"; color:#555; font-size:.8em}
 }
 </style>
 </head>
 <body>
 
+<a class="skip" href="#content">Skip to content</a>
 <div class="scanlines" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
 
-<nav>
+<nav aria-label="Sections">
   <div class="nav-in">
     <span class="brand display neon-red">Adrian Lorente</span>
     <div class="nav-links">
@@ -426,22 +548,25 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
   </div>
 </header>
 
+<main id="content">
 <!-- ================= DOSSIER ================= -->
-<section id="dossier">
+<section id="dossier" aria-label="Summary">
   <div class="wrap reveal">
     <div class="dossier">
       <div class="dossier-top">
         <span class="mono">FILE 001 — SUBJECT: LORENTE, ADRIAN</span>
         <span class="badge">Status: Active</span>
       </div>
-      <div class="dossier-grid">
-        <dl class="field"><dt>Designation</dt><dd>Senior Consultant — IAM, iC Consult</dd></dl>
-        <dl class="field"><dt>Base of operations</dt><dd>Madrid, Spain</dd></dl>
-        <dl class="field"><dt>Primary discipline</dt><dd>Identity Governance &amp; Administration</dd></dl>
-        <dl class="field"><dt>Secondary discipline</dt><dd>Privileged Access Management</dd></dl>
-        <dl class="field"><dt>Languages</dt><dd>Spanish (native) · English (C1) · French (A2&ndash;B1)</dd></dl>
-        <dl class="field"><dt>Known for</dt><dd>The tech go-to — training, untangling hard problems, and making sure ideas travel</dd></dl>
-      </div>
+      <!-- One list of name/value pairs; each <div> groups a pair (valid HTML),
+           where six one-item lists used to be announced as six separate lists. -->
+      <dl class="dossier-grid">
+        <div class="field"><dt>Designation</dt><dd>Senior Consultant — IAM, iC Consult</dd></div>
+        <div class="field"><dt>Base of operations</dt><dd>Madrid, Spain</dd></div>
+        <div class="field"><dt>Primary discipline</dt><dd>Identity Governance &amp; Administration</dd></div>
+        <div class="field"><dt>Secondary discipline</dt><dd>Privileged Access Management</dd></div>
+        <div class="field"><dt>Languages</dt><dd>Spanish (native) · English (C1) · French (A2&ndash;B1)</dd></div>
+        <div class="field"><dt>Known for</dt><dd>The tech go-to — training, untangling hard problems, and making sure ideas travel</dd></div>
+      </dl>
     </div>
   </div>
 </section>
@@ -482,7 +607,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
           gets juniors from "what is an aggregation?" to solving complex tickets on
           their own. Six months is my current record.
         </p>
-        <div class="tags" style="margin-top:20px">
+        <div class="tags mt-l">
           <span class="tag soft">Automates the boring parts</span>
           <span class="tag soft">Documents the scary parts</span>
           <span class="tag soft">Trains the next person</span>
@@ -501,7 +626,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
     </div>
     <div class="sec-rule"></div>
 
-    <div class="legend" aria-label="Tag colour key">
+    <div class="legend" role="group" aria-label="Tag colour key">
       <span><i class="k-hot"></i> Platforms I run</span>
       <span><i class="k-cool"></i> Engineering &amp; cloud</span>
       <span><i class="k-plain"></i> Standards &amp; processes</span>
@@ -637,6 +762,12 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
           <span class="tag cool">Ansible</span>
           <span class="tag cool">Jenkins</span>
         </div>
+        <!-- The CV lists construction materials as the fifth sector; without
+             this row the hero's "5 sectors" only added up to four on the page. -->
+        <div class="tags mt-s">
+          <span class="taglabel">Sectors</span>
+          <span class="tag sector">Construction Materials</span>
+        </div>
       </article>
 
       <article class="entry">
@@ -707,7 +838,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
       <article class="card">
         <div class="kicker mono">Certifications</div>
         <h3>Vendor</h3>
-        <div class="rows" style="margin-top:14px">
+        <div class="rows mt-s">
           <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityIQ Accelerator Pack</div></div></div>
           <div class="row"><div><strong>SailPoint</strong><div class="sub">IdentityNow Implementation &amp; Administration: Essentials v19b</div></div></div>
           <div class="row"><div><strong>SailPoint</strong><div class="sub">File Access Manager Introduction v8.0</div></div></div>
@@ -718,7 +849,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
       <article class="card">
         <div class="kicker mono">Education</div>
         <h3>Academic</h3>
-        <div class="rows" style="margin-top:14px">
+        <div class="rows mt-s">
           <div class="row">
             <div><strong>BSc Computer Engineering — Information Technology</strong>
               <div class="sub">UNED · EQF Level 6, in progress</div></div>
@@ -743,10 +874,10 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
       </article>
     </div>
 
-    <div class="card" style="margin-top:18px">
+    <div class="card mt-m">
       <div class="kicker mono">Off the clock</div>
       <h3>Trainer, organiser, volunteer</h3>
-      <p class="lede" style="margin-top:10px">
+      <p class="lede mt-s">
         Certified soft-skills trainer through the Youth Trainers Academy (Train the Trainer,
         2022) and the Leadership Summer School (2021).
       </p>
@@ -760,7 +891,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
         Before that, board member and founder of the Hardware SIG at the ACM UPM student
         chapter, and a volunteer at COY15 / COP25 in Madrid.
       </p>
-      <div class="tags" style="margin-top:16px">
+      <div class="tags mt-m">
         <span class="taglabel">Soft skills</span>
         <span class="tag soft">Training &amp; mentoring</span>
         <span class="tag soft">Facilitation</span>
@@ -799,11 +930,11 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
       </div>
       <div class="contact-card">
         <span class="lbl">LinkedIn</span>
-        <a href="https://www.linkedin.com/in/adrian-lorente-iam" target="_blank" rel="noopener">adrian-lorente-iam</a>
+        <a href="https://www.linkedin.com/in/adrian-lorente-iam" target="_blank" rel="noopener noreferrer">adrian-lorente-iam</a>
       </div>
       <div class="contact-card">
         <span class="lbl">GitHub</span>
-        <a href="https://github.com/MisterErre" target="_blank" rel="noopener">MisterErre</a>
+        <a href="https://github.com/MisterErre" target="_blank" rel="noopener noreferrer">MisterErre</a>
       </div>
       <div class="contact-card">
         <span class="lbl">Curriculum</span>
@@ -813,6 +944,7 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
     </div>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap">
@@ -824,21 +956,31 @@ footer .quip{font-family:'Share Tech Mono',monospace; color:var(--muted); margin
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-// Hide the sticky nav while the hero's own section buttons are still on screen.
-const nav = document.querySelector('nav');
-const cta = document.querySelector('.cta');
-if (nav && cta) {
-  const navIO = new IntersectionObserver(([entry]) => {
-    nav.classList.toggle('tucked', entry.isIntersecting);
-  }, { threshold: 0 });
-  navIO.observe(cta);
+const reveals = document.querySelectorAll('.reveal');
+
+if (!('IntersectionObserver' in window)) {
+  // Very old engine: show everything rather than leave it hidden.
+  reveals.forEach(el => el.classList.add('in'));
+} else {
+  // Hide the sticky nav while the hero's own section buttons are still on screen.
+  const nav = document.querySelector('nav');
+  const cta = document.querySelector('.cta');
+  if (nav && cta) {
+    new IntersectionObserver(([entry]) => {
+      nav.classList.toggle('tucked', entry.isIntersecting);
+    }).observe(cta);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => io.observe(el));
 }
 
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+// Printing straight from the top of the page would skip unrevealed sections.
+addEventListener('beforeprint', () => reveals.forEach(el => el.classList.add('in')));
 </script>
 
 </body>
